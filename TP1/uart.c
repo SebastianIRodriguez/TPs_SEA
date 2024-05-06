@@ -1,5 +1,29 @@
-#include <stdio.h>
+#include <fcntl.h>
+#include <unistd.h>
 
+int open_tty_file(char path[])
+{
+    int fd = open(path, O_RDWR);
+
+    // Config file as Non-Blocking
+    int flags = fcntl(fd, F_GETFL, 0);
+    fcntl(fd, F_SETFL, flags | O_NONBLOCK);
+
+    return fd;
+}
+
+int serial_write(int fd, char data[])
+{
+    int data_size = strlen(data);
+    return write(fd, data, data_size);
+}
+
+int serial_write_ln(int fd, char data[])
+{
+    return serial_write(fd, data) + serial_write(fd, "\n");
+}
+
+/*
 int main() {
     FILE* fichero = fopen("/dev/ttyS0", "r");
     
@@ -32,4 +56,4 @@ int main() {
         printf("No se ha podido cerrar el fichero.\n");
         return -1;
     }
-}
+}*/
