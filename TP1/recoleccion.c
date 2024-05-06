@@ -129,20 +129,20 @@ int main(void)
 {
     // Rutas a los archivos de interes
     char ruta_cpuinfo[] = "/proc/cpuinfo";          // Contiene la información de la CPU
-    char ruta_sensor[] = "/tp1/sensor";             // Contiene la información del sensor de humedad
-    char ruta_ethernet[] = "/tp1/eth_info.txt";     // Contendrá la información extraída del ifconfig
-    char ruta_gateway[] = "/tp1/route.txt";         // Contrendrá la información extraída de route
-    char ruta_html[] = "/tp1/data.json";         // Ruta al archivo json
+    char ruta_sensor[] = "/tp1_files/htu21_humidity";             // Contiene la información del sensor de humedad
+    char ruta_ethernet[] = "/tp1_files/eth_info.txt";     // Contendrá la información extraída del ifconfig
+    char ruta_gateway[] = "/tp1_files/route.txt";         // Contrendrá la información extraída de route
+    char ruta_html[] = "/tp1_files/data.json";         // Ruta al archivo json
   
     // Comandos bash
-    char bc_read_net[] = "#!/bin/bash \n ifconfig eth0 > /tp1/eth_info.txt";    // Solicitamos y guardamos la info de la placa de red
-    char bc_read_gateway[] = "#!/bin/bash \n route > /tp1/route.txt";           // Solicitamos y guardamos la info del comando route
+    char bc_read_net[] = "#!/bin/bash \n ifconfig eth0 > /tp1_files/eth_info.txt";    // Solicitamos y guardamos la info de la placa de red
+    char bc_read_gateway[] = "#!/bin/bash \n route > /tp1_files/route.txt";           // Solicitamos y guardamos la info del comando route
     
     // Otras variables
-    char info_cpu[500];         // Tendrá el contenido de "cpuinfo"
+    char info_cpu[5000];         // Tendrá el contenido de "cpuinfo"
     char info_sensor[10];       // Tendrá el contenido de "sensor"
-    char info_ethernet[600];    // Tendrá el contenido de "eth_info.txt"
-    char info_gateway[300];     // Tendrá el contenido de "route.txt"
+    char info_ethernet[6000];    // Tendrá el contenido de "eth_info.txt"
+    char info_gateway[3000];     // Tendrá el contenido de "route.txt"
     int bytes_leidos = 0;       // Variable auxiliar
     Ethernet_info eth0;         // Estructura con los datos de la placa de red
     FILE *datos_html;           // Puntero al archivo json
@@ -186,7 +186,7 @@ int main(void)
         printf("La lectura del archivo %s fallo con error: %d\n", ruta_gateway, bytes_leidos);
     }
     
-    // GUardamos los datos
+    // Guardamos los datos
     read_match(info_ethernet, "Link encap:", ' ', eth0.interface);      // Tecnología de la interfaz
     read_match(info_ethernet, "inet addr:", ' ', eth0.local_ip);        // IP local
     read_match(info_gateway, "default         ", ' ', eth0.gateway);    // Gateway
@@ -220,15 +220,25 @@ int main(void)
         return -1;
     }
 
-    fprintf(datos_html,"{\n \"humidity\": \"%s %%\",\n"
-    "\"cpu_info\": \"%s\",\n"
-    "ip local: %s  gateway: %s  broadcast: %s  mascara: %s  MAC: %s\n"
-    "ipv6: %s\n"
-    "Rx packets: %s\n"
-    "Tx packets: %s\n"
-    "Rx bytes: %s\n"
-    "Tx bytes: %s\n"
-    "}", info_sensor, info_cpu, eth0.interface, eth0.local_ip, eth0.gateway, eth0.broadcast, eth0.mask, eth0.mac, eth0.ipv6, eth0.rx_packets, eth0.tx_packets, eth0.rx_bytes, eth0.tx_bytes);
+    fprintf(
+        datos_html,
+        "{\n"
+        "\"humidity\":  \"%s\",\n"
+        "\"cpu_info\":  \"%s\",\n"
+        "\"interface\": \"%s\",\n"
+        "\"ip local\":  \"%s\",\n"
+        "\"gateway\":   \"%s\",\n"
+        "\"broadcast\": \"%s\",\n"
+        "\"mascara\":   \"%s\",\n"
+        "\"mac\":       \"%s\",\n"
+        "\"ipv6\":      \"%s\",\n"
+        "\"rx packets\":\"%s\",\n"
+        "\"tx packets\":\"%s\",\n"
+        "\"rx bytes\":  \"%s\",\n"
+        "\"tx bytes\":  \"%s\"\n"
+        "}",
+        info_sensor, info_cpu, eth0.interface, eth0.local_ip, eth0.gateway, eth0.broadcast, eth0.mask, eth0.mac, eth0.ipv6, eth0.rx_packets, eth0.tx_packets, eth0.rx_bytes, eth0.tx_bytes
+    );
 
     // Intentamos cerrar el archivo
     if (fclose(datos_html) != 0)
