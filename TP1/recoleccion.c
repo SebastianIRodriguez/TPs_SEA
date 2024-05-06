@@ -125,31 +125,82 @@ int read_match(const char *origin, const char *match_exp, const char end_c, char
     return i; 
 }
 
-int main(void)
+/**
+ * @brief Reemplaza todas las coincidencias de un substring determinado dentro de un string
+ * 
+ * @param orig arreglo de origen
+ * @param rep substring buscado
+ * @param with substring con el que se reemplazarán las coincidencias de <rep>
+ * @return longitud del arreglo resultante, negativo si hay error
+ * 
+*/
+int str_replace(char *orig, char *rep, char *with) {
+    char *result;   // arreglo auxiliar que acumulará el arreglo modificado
+    char *ins;      // the next insert point
+    char *tmp;      // varies
+    char * inicial = orig; // respaldo del arreglo de origen
+    int len_rep;  // length of rep (the string to remove)
+    int len_with; // length of with (the string to replace rep with)
+    int len_front; // distance between rep and end of last rep
+    int count;    // number of replacements
+
+    // Checkeos de seguridad
+    if (!orig || !rep)
+        return -1;
+    len_rep = strlen(rep);
+    if (len_rep == 0)
+        return -2; // empty rep causes infinite loop during count
+    if (!with)
+        with = "";
+    len_with = strlen(with);
+
+    // Cuenta la cantidad de reemplazos requeridos
+    ins = orig;
+    for (count = 0; (tmp = strstr(ins, rep)); ++count) {
+        ins = tmp + len_rep;
+    }
+
+    // Reservamos la memoria requerida
+    int final_len = strlen(orig) + (len_with - len_rep) * count + 1;
+    result = malloc(final_len);
+    tmp = result;
+
+    if (!result)
+        return 0;
+
+    // first time through the loop, all the variable are set correctly
+    // from here on,
+    //    tmp points to the end of the result string
+    //    ins points to the next occurrence of rep in orig
+    //    orig points to the remainder of orig after "end of rep"
+    while (count--) {
+        ins = strstr(orig, rep);
+        len_front = ins - orig;
+        tmp = strncpy(tmp, orig, len_front) + len_front;
+        tmp = strcpy(tmp, with) + len_with;
+        orig += len_front + len_rep; // move to next "end of rep"
+    }
+
+    // Copiamos el arreglo auxiliar en el original
+    strcpy(inicial, result);
+
+    // LIberamos la memoria reservada dinámicamente
+    free(result);
+
+    return final_len;
+}
+
+/**
+ * 
+*/
+int get_cpu_data(char *info_cpu)
 {
-    // Rutas a los archivos de interes
     char ruta_cpuinfo[] = "/proc/cpuinfo";          // Contiene la información de la CPU
-    char ruta_sensor[] = "/tp1_files/htu21_humidity";             // Contiene la información del sensor de humedad
-    char ruta_ethernet[] = "/tp1_files/eth_info.txt";     // Contendrá la información extraída del ifconfig
-    char ruta_gateway[] = "/tp1_files/route.txt";         // Contrendrá la información extraída de route
-    char ruta_html[] = "/tp1_files/data.json";         // Ruta al archivo json
-  
-    // Comandos bash
-    char bc_read_net[] = "#!/bin/bash \n ifconfig eth0 > /tp1_files/eth_info.txt";    // Solicitamos y guardamos la info de la placa de red
-    char bc_read_gateway[] = "#!/bin/bash \n route > /tp1_files/route.txt";           // Solicitamos y guardamos la info del comando route
-    
-    // Otras variables
-    char info_cpu[5000];         // Tendrá el contenido de "cpuinfo"
-    char info_sensor[10];       // Tendrá el contenido de "sensor"
-    char info_ethernet[6000];    // Tendrá el contenido de "eth_info.txt"
-    char info_gateway[3000];     // Tendrá el contenido de "route.txt"
-    int bytes_leidos = 0;       // Variable auxiliar
-    Ethernet_info eth0;         // Estructura con los datos de la placa de red
-    FILE *datos_html;           // Puntero al archivo json
+    int bytes_leidos = 0;
 
     // Leemos la información de cpuinfo
     bytes_leidos = read_file(ruta_cpuinfo, info_cpu);
-
+    
     if(0 < bytes_leidos)
     {
         printf("Se pudo leer el archivo %s.\n Longitud: %d\n Contenido: \n%s\n", ruta_cpuinfo, bytes_leidos, info_cpu);
@@ -159,11 +210,30 @@ int main(void)
         printf("La lectura del archivo %s fallo con error: %d\n", ruta_cpuinfo, bytes_leidos);
     }
 
+    return bytes_leidos;
+}
+
+Ethernet_info get_ethernet_data()
+{
+    Ethernet_info eth0;
+    int bytes_leidos;
+
+    // Arreglos
+    char info_ethernet[2000];    // Tendrá el contenido de "eth_info.txt"
+    char info_gateway[2000];     // Tendrá el contenido de "route.txt"
+
+    // Rutas
+    char ruta_ethernet[] = "/tp1_files/eth_info.txt";     // Contendrá la información extraída del ifconfig
+    char ruta_gateway[] = "/tp1_files/route.txt";         // Contrendrá la información extraída de route
+
+    // Comandos bash
+    char bc_read_net[] = "#!/bin/bash \n ifconfig eth0 > /tp1_files/eth_info.txt";    // Solicitamos y guardamos la info de la placa de red
+    char bc_read_gateway[] = "#!/bin/bash \n route > /tp1_files/route.txt";           // Solicitamos y guardamos la info del comando route
+
     // Leemos la info de la placa de red (ethernet)
     system(bc_read_net);
     system(bc_read_gateway);
 
-    // Guardamos la información en arreglos
     bytes_leidos = read_file(ruta_ethernet, info_ethernet);
 
     if(0 < bytes_leidos)
@@ -207,10 +277,34 @@ int main(void)
     "Rx bytes: %s\n"
     "Tx bytes: %s\n", eth0.interface, eth0.local_ip, eth0.gateway, eth0.broadcast, eth0.mask, eth0.mac, eth0.ipv6, eth0.rx_packets, eth0.tx_packets, eth0.rx_bytes, eth0.tx_bytes);
 
-    // Recolectamos la info del sensor
-    read_file(ruta_sensor, info_sensor);
+    return eth0;
+}
 
-    printf("El sensor dice que hay %s porciento de humedad\n", info_sensor);
+// 
+int get_sensor_data(char *info_sensor)
+{
+    char ruta_sensor[] = "/tp1_files/htu21_humidity";             // Contiene la información del sensor de humedad
+    int bytes_leidos;
+
+    info_sensor[0] = 0;
+
+    bytes_leidos = read_file(ruta_sensor, info_sensor);
+
+    if(0 < bytes_leidos)
+    {
+        // Quito el \n del string
+        bytes_leidos = bytes_leidos - 1;
+        info_sensor[bytes_leidos] = 0;
+        printf("El sensor dice que hay %s porciento de humedad\n", info_sensor);
+    }
+    
+    return bytes_leidos;
+}
+
+int update_json(char *info_cpu_json, char *info_sensor, Ethernet_info eth0)
+{
+    FILE *datos_html;           // Puntero al archivo json
+    char ruta_html[] = "/tp1_files/data.json";         // Ruta al archivo json
 
     // Pasamos los datos al servidor web:
     datos_html = fopen(ruta_html, "w");
@@ -237,7 +331,7 @@ int main(void)
         "\"rx bytes\":  \"%s\",\n"
         "\"tx bytes\":  \"%s\"\n"
         "}",
-        info_sensor, info_cpu, eth0.interface, eth0.local_ip, eth0.gateway, eth0.broadcast, eth0.mask, eth0.mac, eth0.ipv6, eth0.rx_packets, eth0.tx_packets, eth0.rx_bytes, eth0.tx_bytes
+        info_sensor, info_cpu_json, eth0.interface, eth0.local_ip, eth0.gateway, eth0.broadcast, eth0.mask, eth0.mac, eth0.ipv6, eth0.rx_packets, eth0.tx_packets, eth0.rx_bytes, eth0.tx_bytes
     );
 
     // Intentamos cerrar el archivo
@@ -248,24 +342,29 @@ int main(void)
     }
 
     return 0;
-}
-  /*{
-    "humidity": "85 %",
-    "cpu_info": "processor:0\nBogoMIPS: 38.40\nFeatures:fp asimd evtstrm crc32 cpuid\nCPU implementer: 0x41\nCPU architecture: 8\nCPU variant: 0x0\nCPU part: 0xd03CPU revision : 4",
-    "network_info": "eth0\nLink encap:Ethernet  HWaddr B8:27:EB:00:88:83\ninet addr:192.168.56.3  Bcast:192.168.56.255  Mask:255.255.255.0\ninet6 addr: fe80::ba27:ebff:fe00:8883/64 Scope:Link\nUP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1\nRX packets:5208 errors:0 dropped:0 overruns:0 frame:0\nTX packets:1291 errors:0 dropped:0 overruns:0 carrier:0\ncollisions:0 txqueuelen:1000\nRX bytes:2274174 (2.1 MiB)  TX bytes:231025 (225.6 KiB)"
-}*/
-  //printf( "Se leyo de NUMERO_PRUEBA: %d\n", numero);
-  //printf( "Se leyo de STRING_PRUEBA: %s\n\n", getenv( "STRING_PRUEBA" ) );
-  /**
-   *     // Intento guardar la ip local
-    bytes_leidos = read_match(info_ethernet, "inet addr:", ' ', eth0.local_ip);
 
-    if(0 < bytes_leidos)
-    {
-        printf("Se pudo leer la ip local.\n Longitud: %d\n Contenido: \n%s\n", bytes_leidos, eth0.local_ip);
-    }
-    else
-    {
-        printf("Fallo con error: %d\n", bytes_leidos);
-    }
-  */
+}
+int main(void)
+{
+    char info_cpu[2000];            // Tendrá el contenido de "cpuinfo"
+    char info_cpu_json[2000];       // Tendrá el contenido de "cpuinfo" para la página (distinto formato)
+    char info_sensor[10];           // Tendrá el contenido de "sensor"
+    Ethernet_info eth0;             // Estructura con los datos de la placa de red
+
+    // Obtenemos la info de la CPU
+    get_cpu_data(info_cpu);
+
+    // La copiamos y ponemos en formato adecuado para el json
+    strcpy(info_cpu_json, info_cpu);
+    str_replace(info_cpu_json, "\n", "\\n");
+
+    // Obtenemos la info de la placa de red
+    eth0 = get_ethernet_data();
+
+    // Obtenemos la info del sensor
+    get_sensor_data(info_sensor);
+
+    // Actualizamos el .json para el html
+    update_json(info_cpu_json, info_sensor, eth0);
+    return 0;
+}
