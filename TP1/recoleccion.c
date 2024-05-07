@@ -136,7 +136,7 @@ int read_match(const char *origin, const char *match_exp, const char end_c, char
  */
 int str_replace(char *orig, char *rep, char *with)
 {
-    char *result;         // arreglo auxiliar que acumulará el arreglo modificado
+    char result[2000];    // arreglo auxiliar que acumulará el arreglo modificado
     char *ins;            // the next insert point
     char *tmp;            // varies
     char *inicial = orig; // respaldo del arreglo de origen
@@ -162,13 +162,9 @@ int str_replace(char *orig, char *rep, char *with)
         ins = tmp + len_rep;
     }
 
-    // Reservamos la memoria requerida
     int final_len = strlen(orig) + (len_with - len_rep) * count + 1;
-    result = malloc(final_len);
-    tmp = result;
 
-    if (!result)
-        return 0;
+    tmp = result;
 
     // first time through the loop, all the variable are set correctly
     // from here on,
@@ -186,9 +182,6 @@ int str_replace(char *orig, char *rep, char *with)
 
     // Copiamos el arreglo auxiliar en el original
     strcpy(inicial, result);
-
-    // LIberamos la memoria reservada dinámicamente
-    free(result);
 
     return final_len;
 }
