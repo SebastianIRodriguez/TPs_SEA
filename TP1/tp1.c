@@ -5,8 +5,9 @@
 #include <string.h>
 #include <time.h>
 
-#include "recoleccion.c"
-#include "uart.c"
+#include "string_utils.h"
+#include "recoleccion.h"
+#include "uart.h"
 
 #define TTY_PATH "/dev/ttyS0"
 const int MAX_COMMAND_LENGTH = 50;
@@ -149,7 +150,7 @@ int main()
             update_json(info_cpu_json, info_sensor, eth0);
         }
 
-        int byte_count = read(fd, &buff, 1);
+        int byte_count = serial_read(fd, &buff, 1);
         if (byte_count == 1)
         {
             cmd_input_buffer[buffer_index] = buff;
@@ -164,6 +165,7 @@ int main()
 
                 COMMAND_TYPE command = interpret_command(cmd_input_buffer);
                 process_command(fd, command, info_sensor, info_cpu, eth0);
+
                 if (command == EXIT)
                 {
                     return 0;

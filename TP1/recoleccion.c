@@ -15,22 +15,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "string_utils.c"
-
-typedef struct
-{
-    char local_ip[16];
-    char gateway[16];
-    char broadcast[16];
-    char mask[16];
-    char mac[20];
-    char ipv6[60];
-    char rx_packets[200];
-    char tx_packets[200];
-    char rx_bytes[100];
-    char tx_bytes[100];
-    char interface[20];
-} Ethernet_info;
+#include "recoleccion.h"
+#include "string_utils.h"
 
 /**
  * @brief Lee el contenido de un archivo (en formato texto)
@@ -74,7 +60,10 @@ int read_file(const char *filename, char *content)
 }
 
 /**
+ * @brief Obtiene y copia en un arreglo la información de la cpu del dispositivo
  *
+ * @param info_cpu arreglo donde se guardará la información
+ * @return int bytes leídos, negativo si hay error
  */
 int get_cpu_data(char *info_cpu)
 {
@@ -84,6 +73,12 @@ int get_cpu_data(char *info_cpu)
     return bytes_leidos;
 }
 
+/**
+ * @brief Obtiene los datos de la placa de red del equipo y los devuelve en
+ * una correspondiente estructura de datos
+ *
+ * @return Ethernet_info información de la placa
+ */
 Ethernet_info get_ethernet_data()
 {
     Ethernet_info eth0;
@@ -124,6 +119,12 @@ Ethernet_info get_ethernet_data()
     return eth0;
 }
 
+/**
+ * @brief Obtiene y copia en un arreglo la información del sensor de humedad
+ *
+ * @param info_sensor arreglo donde se guardará la información
+ * @return int bytes leídos, negativo si hay error
+ */
 int get_sensor_data(char *info_sensor)
 {
     char ruta_sensor[] = "/tp1_files/htu21_humidity"; // Contiene la información del sensor de humedad
@@ -145,6 +146,14 @@ int get_sensor_data(char *info_sensor)
     return bytes_leidos;
 }
 
+/**
+ * @brief Actualiza la información del archivo json del servidor
+ *
+ * @param info_cpu_json arreglo en formato adecuado que contiene la información del cpu
+ * @param info_sensor arreglo que contiene la información del sensor de humedad
+ * @param eth0 estructura que contiene la información de la placa de red
+ * @return int  si hubo éxito, negativo si presentó problemas
+ */
 int update_json(char *info_cpu_json, char *info_sensor, Ethernet_info eth0)
 {
     char ruta_json[] = "/var/www/data.json";    // Ruta al archivo json
