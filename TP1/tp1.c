@@ -117,8 +117,8 @@ int main()
     time_t tiempo_auxiliar;   // Variable auxiliar para coordinar la temporización de tareas
 
     char buff = 0;
-    char cmd_input[MAX_COMMAND_LENGTH];
-    int cmd_index = 0;
+    char cmd_input_buffer[MAX_COMMAND_LENGTH];
+    int buffer_index = 0;
 
     int fd = open_tty_file(TTY_PATH);
 
@@ -152,17 +152,17 @@ int main()
         int byte_count = read(fd, &buff, 1);
         if (byte_count == 1)
         {
-            cmd_input[cmd_index] = buff;
+            cmd_input_buffer[buffer_index] = buff;
 
-            if (cmd_index == MAX_COMMAND_LENGTH)
-                cmd_index = 0;
+            if (buffer_index == MAX_COMMAND_LENGTH)
+                buffer_index = 0;
 
-            if (cmd_input[cmd_index] == '\n')
+            if (cmd_input_buffer[buffer_index] == '\n')
             {
-                cmd_input[cmd_index] = '\0';
-                cmd_index = 0;
+                cmd_input_buffer[buffer_index] = '\0';
+                buffer_index = 0;
 
-                COMMAND_TYPE command = interpret_command(cmd_input);
+                COMMAND_TYPE command = interpret_command(cmd_input_buffer);
                 process_command(fd, command, info_sensor, info_cpu, eth0);
                 if (command == EXIT)
                 {
@@ -172,7 +172,7 @@ int main()
             }
             else
             {
-                cmd_index++;
+                buffer_index++;
             }
         }
     }

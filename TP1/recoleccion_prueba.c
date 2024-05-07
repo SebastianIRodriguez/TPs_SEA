@@ -140,6 +140,7 @@ int str_replace(char *orig, char *rep, char *with)
     char *ins;            // the next insert point
     char *tmp;            // varies
     char *inicial = orig; // respaldo del arreglo de origen
+    int len_orig;
     int len_rep;          // Longitud del substring a remover
     int len_with;         // Longitud del string a agregar
     int len_front;        // distance between rep and end of last rep
@@ -154,6 +155,7 @@ int str_replace(char *orig, char *rep, char *with)
     if (!with)
         with = "";
     len_with = strlen(with);
+    len_orig = strlen(orig);
 
     // Cuenta la cantidad de reemplazos requeridos
     ins = orig;
@@ -171,12 +173,6 @@ int str_replace(char *orig, char *rep, char *with)
     //    tmp points to the end of the result string
     //    ins points to the next occurrence of rep in orig
     //    orig points to the remainder of orig after "end of rep"
-    while (count--)
-    {
-        // Busco la coincidencia del substring a remover
-        ins = strstr(orig, rep);
-
-    }
 
     while (count--)
     {
@@ -186,6 +182,10 @@ int str_replace(char *orig, char *rep, char *with)
         tmp = strcpy(tmp, with) + len_with;
         orig += len_front + len_rep; // move to next "end of rep"
     }
+
+    if(orig != (inicial + len_orig))
+        strcpy(tmp, orig);
+    
 
     // Copiamos el arreglo auxiliar en el original
     strcpy(inicial, result);
@@ -216,159 +216,19 @@ int get_cpu_data(char *info_cpu)
     return bytes_leidos;
 }
 
-Ethernet_info get_ethernet_data()
-{
-    Ethernet_info eth0;
-    int bytes_leidos;
-
-    // Arreglos
-    char info_ethernet[2000];    // Tendrá el contenido de "eth_info.txt"
-    char info_gateway[2000];     // Tendrá el contenido de "route.txt"
-
-    // Rutas
-    char ruta_ethernet[] = "/tp1_files/eth_info.txt";     // Contendrá la información extraída del ifconfig
-    char ruta_gateway[] = "/tp1_files/route.txt";         // Contrendrá la información extraída de route
-
-    // Comandos bash
-    char bc_read_net[] = "#!/bin/bash \n ifconfig eth0 > /tp1_files/eth_info.txt";    // Solicitamos y guardamos la info de la placa de red
-    char bc_read_gateway[] = "#!/bin/bash \n route > /tp1_files/route.txt";           // Solicitamos y guardamos la info del comando route
-
-    // Leemos la info de la placa de red (ethernet)
-    system(bc_read_net);
-    system(bc_read_gateway);
-
-    bytes_leidos = read_file(ruta_ethernet, info_ethernet);
-
-    if(0 < bytes_leidos)
-    {
-        printf("Se pudo leer el archivo %s.\n Longitud: %d\n Contenido: \n%s\n", ruta_ethernet, bytes_leidos, info_ethernet);
-    }
-    else
-    {
-        printf("La lectura del archivo %s fallo con error: %d\n", ruta_ethernet, bytes_leidos);
-    }
-
-    bytes_leidos = read_file(ruta_gateway, info_gateway);
-
-    if(0 < bytes_leidos)
-    {
-        printf("Se pudo leer el archivo %s.\n Longitud: %d\n Contenido: \n%s\n", ruta_gateway, bytes_leidos, info_gateway);
-    } 
-    else
-    {
-        printf("La lectura del archivo %s fallo con error: %d\n", ruta_gateway, bytes_leidos);
-    }
-    
-    // Guardamos los datos
-    read_match(info_ethernet, "Link encap:", ' ', eth0.interface);      // Tecnología de la interfaz
-    read_match(info_ethernet, "inet addr:", ' ', eth0.local_ip);        // IP local
-    read_match(info_gateway, "default         ", ' ', eth0.gateway);    // Gateway
-    read_match(info_ethernet, "Bcast:", ' ', eth0.broadcast);           // Broadcast
-    read_match(info_ethernet, "Mask:", '\n', eth0.mask);                // Mask
-    read_match(info_ethernet, "inet6 addr: ", ' ', eth0.ipv6);          // IPv6
-    read_match(info_ethernet, "HWaddr ", '\n', eth0.mac);               // MAC
-    read_match(info_ethernet, "RX packets:", '\n', eth0.rx_packets);    // rx packets
-    read_match(info_ethernet, "TX packets:", '\n', eth0.tx_packets);    // tx packets
-    read_match(info_ethernet, "RX bytes:", 'T', eth0.rx_bytes);         // rx bytes
-    read_match(info_ethernet, "TX bytes:", '\n', eth0.tx_bytes);        // tx bytes
-
-    printf("Info de la placa de red %s: \n"
-    "ip local: %s  gateway: %s  broadcast: %s  mascara: %s  MAC: %s\n"
-    "ipv6: %s\n"
-    "Rx packets: %s\n"
-    "Tx packets: %s\n"
-    "Rx bytes: %s\n"
-    "Tx bytes: %s\n", eth0.interface, eth0.local_ip, eth0.gateway, eth0.broadcast, eth0.mask, eth0.mac, eth0.ipv6, eth0.rx_packets, eth0.tx_packets, eth0.rx_bytes, eth0.tx_bytes);
-
-    return eth0;
-}
-
-// 
-int get_sensor_data(char *info_sensor)
-{
-    char ruta_sensor[] = "/tp1_files/htu21_humidity";             // Contiene la información del sensor de humedad
-    int bytes_leidos;
-
-    info_sensor[0] = 0;
-
-    bytes_leidos = read_file(ruta_sensor, info_sensor);
-
-    if(0 < bytes_leidos)
-    {
-        // Quito el \n del string
-        bytes_leidos = bytes_leidos - 1;
-        info_sensor[bytes_leidos] = 0;
-        printf("El sensor dice que hay %s porciento de humedad\n", info_sensor);
-    }
-    
-    return bytes_leidos;
-}
-
-int update_json(char *info_cpu_json, char *info_sensor, Ethernet_info eth0)
-{
-    FILE *datos_html;           // Puntero al archivo json
-    char ruta_html[] = "/tp1_files/data.json";         // Ruta al archivo json
-
-    // Pasamos los datos al servidor web:
-    datos_html = fopen(ruta_html, "w");
-    if (datos_html == NULL)
-    {
-        printf("El archivo no se ha podido abrir para escritura.\n");
-        return -1;
-    }
-
-    fprintf(
-        datos_html,
-        "{\n"
-        "\"humidity\":  \"%s\",\n"
-        "\"cpu_info\":  \"%s\",\n"
-        "\"interface\": \"%s\",\n"
-        "\"ip local\":  \"%s\",\n"
-        "\"gateway\":   \"%s\",\n"
-        "\"broadcast\": \"%s\",\n"
-        "\"mascara\":   \"%s\",\n"
-        "\"mac\":       \"%s\",\n"
-        "\"ipv6\":      \"%s\",\n"
-        "\"rx packets\":\"%s\",\n"
-        "\"tx packets\":\"%s\",\n"
-        "\"rx bytes\":  \"%s\",\n"
-        "\"tx bytes\":  \"%s\"\n"
-        "}",
-        info_sensor, info_cpu_json, eth0.interface, eth0.local_ip, eth0.gateway, eth0.broadcast, eth0.mask, eth0.mac, eth0.ipv6, eth0.rx_packets, eth0.tx_packets, eth0.rx_bytes, eth0.tx_bytes
-    );
-
-    // Intentamos cerrar el archivo
-    if (fclose(datos_html) != 0)
-    {
-        printf("No se ha podido cerrar el archivo %s\n", ruta_html);
-        return -2;
-    }
-
-    return 0;
-
-}
 int main(void)
 {
-    char info_cpu[2000];            // Tendrá el contenido de "cpuinfo"
-    char info_cpu_json[2000];       // Tendrá el contenido de "cpuinfo" para la página (distinto formato)
+    char info_cpu[30] = "a\ta\ta\ta\t";            // Tendrá el contenido de "cpuinfo"
+    char info_cpu_json[30];       // Tendrá el contenido de "cpuinfo" para la página (distinto formato)
     char info_sensor[10];           // Tendrá el contenido de "sensor"
     Ethernet_info eth0;             // Estructura con los datos de la placa de red
 
     // Obtenemos la info de la CPU
-    get_cpu_data(info_cpu);
+    //get_cpu_data(info_cpu);
 
     // La copiamos y ponemos en formato adecuado para el json
     strcpy(info_cpu_json, info_cpu);
-    str_replace(info_cpu_json, "\n", "\\n");
-
-    // Obtenemos la info de la placa de red
-    eth0 = get_ethernet_data();
-
-    // Obtenemos la info del sensor
-    get_sensor_data(info_sensor);
-
-    // Actualizamos el .json para el html
-    update_json(info_cpu_json, info_sensor, eth0);
+    str_replace(info_cpu_json, "\t", "\\t");
 
     char prueba[200] = "CPU revision	: 4\nCPU revision	: 4\nCPU revision	: 4\n\n";
     char *p = prueba;
