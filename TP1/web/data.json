@@ -1,5 +1,5 @@
 {
-"humidity":  "74.740",
+"humidity":  "88.120",
 "cpu_info":  "processor\t: 0\nBogoMIPS\t: 38.40\nFeatures\t: fp asimd evtstrm crc32 cpuid\nCPU implementer\t: 0x41\nCPU architecture: 8\nCPU variant\t: 0x0\nCPU part\t: 0xd03\nCPU revision\t: 4\n\nprocessor\t: 1\nBogoMIPS\t: 38.40\nFeatures\t: fp asimd evtstrm crc32 cpuid\nCPU implementer\t: 0x41\nCPU architecture: 8\nCPU variant\t: 0x0\nCPU part\t: 0xd03\nCPU revision\t: 4\n\nprocessor\t: 2\nBogoMIPS\t: 38.40\nFeatures\t: fp asimd evtstrm crc32 cpuid\nCPU implementer\t: 0x41\nCPU architecture: 8\nCPU variant\t: 0x0\nCPU part\t: 0xd03\nCPU revision\t: 4\n\nprocessor\t: 3\nBogoMIPS\t: 38.40\nFeatures\t: fp asimd evtstrm crc32 cpuid\nCPU implementer\t: 0x41\nCPU architecture: 8\nCPU variant\t: 0x0\nCPU part\t: 0xd03\nCPU revision\t: 4\n\n",
 "interface": "Ethernet",
 "ip local":  "192.168.56.3",
@@ -8,8 +8,8 @@
 "mascara":   "255.255.255.0",
 "mac":       "B8:27:EB:00:88:83  ",
 "ipv6":      "fe80::ba27:ebff:fe00:8883/64",
-"rx packets":"44766 errors:0 dropped:0 overruns:0 frame:0",
-"tx packets":"39826 errors:0 dropped:0 overruns:0 carrier:0",
-"rx bytes":  "13118044 (12.5 MiB)  ",
-"tx bytes":  "8877140 (8.4 MiB)"
+"rx packets":"7902 errors:0 dropped:0 overruns:0 frame:0",
+"tx packets":"7233 errors:0 dropped:0 overruns:0 carrier:0",
+"rx bytes":  "3689027 (3.5 MiB)  ",
+"tx bytes":  "2094993 (1.9 MiB)"
 }
