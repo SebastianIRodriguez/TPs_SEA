@@ -1,0 +1,4 @@
+../source/Led_and_switch_control.c:19:6:Give_Clock_To	0	static
+../source/Led_and_switch_control.c:24:6:Sw1_get	0	static
+../source/Led_and_switch_control.c:30:6:Sw3_get	0	static
+../source/Led_and_switch_control.c:36:6:Configurar_sistema	8	static

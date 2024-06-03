@@ -1,0 +1,3 @@
+../source/SysTick.c:9:6:SysTick_set_time	24	static
+../source/SysTick.c:24:6:SysTick_begin	8	static
+../source/SysTick.c:35:6:SysTick_end	8	static

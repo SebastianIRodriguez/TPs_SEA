@@ -1,0 +1,4 @@
+../source/LM35.c:6:6:LM35_attach_channel_resolution	16	static
+../source/LM35.c:11:6:LM35_attach_vref	16	static
+../source/LM35.c:16:7:LM35_codificar_grados	32	static
+../source/LM35.c:22:7:LM35_codificar_en_grados	40	static

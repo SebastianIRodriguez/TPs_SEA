@@ -1,0 +1,12 @@
+C:\Users\lraff\Documents\MCUXpressoIDE_11.5.1_7266\workspace\TP3_SD2_Raffagnini_Rodriguez\drivers/fsl_clock.h:438:20:CLOCK_EnableClock	24	static
+C:\Users\lraff\Documents\MCUXpressoIDE_11.5.1_7266\workspace\TP3_SD2_Raffagnini_Rodriguez\drivers/fsl_port.h:243:20:PORT_SetPinConfig	32	static
+C:\Users\lraff\Documents\MCUXpressoIDE_11.5.1_7266\workspace\TP3_SD2_Raffagnini_Rodriguez\drivers/fsl_port.h:346:20:PORT_SetPinMux	24	static
+../board/pin_mux.c:103:6:BOARD_InitBootPins	8	static
+../board/pin_mux.c:125:6:BOARD_InitPins	8	static
+../board/pin_mux.c:162:6:BOARD_InitLCDPins	8	static
+../board/pin_mux.c:419:6:BOARD_InitBUTTONSPins	24	static
+../board/pin_mux.c:487:6:BOARD_InitLEDsPins	24	static
+../board/pin_mux.c:553:6:BOARD_InitDEBUG_UARTPins	16	static
+../board/pin_mux.c:617:6:BOARD_InitUSBPins	8	static
+../board/pin_mux.c:683:6:BOARD_InitACCEL_I2CPins	24	static
+../board/pin_mux.c:787:6:BOARD_InitOSCPins	8	static

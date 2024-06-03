@@ -1,0 +1,5 @@
+C:\Users\lraff\Documents\MCUXpressoIDE_11.5.1_7266\workspace\TP3_Sistemas_Digitales\CMSIS/core_cm0plus.h:741:22:__NVIC_EnableIRQ	16	static
+C:\Users\lraff\Documents\MCUXpressoIDE_11.5.1_7266\workspace\TP3_Sistemas_Digitales\CMSIS/core_cm0plus.h:850:22:__NVIC_SetPriority	24	static
+../source/TPM0.c:11:6:TPMO_set	8	static
+../source/TPM0.c:57:6:TPM0_begin	8	static
+../source/TPM0.c:63:6:TPM0_end	8	static

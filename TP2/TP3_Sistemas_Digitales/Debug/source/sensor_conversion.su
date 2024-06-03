@@ -1,0 +1,2 @@
+../source/sensor_conversion.c:3:5:map_light_to_time_period	16	static
+../source/sensor_conversion.c:8:5:map_temperature	40	static

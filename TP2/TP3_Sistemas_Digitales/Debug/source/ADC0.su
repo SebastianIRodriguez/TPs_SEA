@@ -1,0 +1,4 @@
+../source/ADC0.c:12:6:ADC0_begin	8	static
+../source/ADC0.c:44:5:ADC0_get	24	static
+../source/ADC0.c:52:6:ADC0_activate_port	16	static
+../source/ADC0.c:56:7:codificar_en_grados	48	static

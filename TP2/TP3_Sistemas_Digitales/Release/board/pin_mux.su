@@ -1,0 +1,10 @@
+C:\Users\lraff\Documents\MCUXpressoIDE_11.5.1_7266\workspace\Clase_10_11\drivers/fsl_clock.h:438:20:CLOCK_EnableClock	0	static
+../board/pin_mux.c:125:6:BOARD_InitPins	0	static
+../board/pin_mux.c:162:6:BOARD_InitLCDPins	16	static
+../board/pin_mux.c:419:6:BOARD_InitBUTTONSPins	16	static
+../board/pin_mux.c:487:6:BOARD_InitLEDsPins	16	static
+../board/pin_mux.c:553:6:BOARD_InitDEBUG_UARTPins	8	static
+../board/pin_mux.c:103:6:BOARD_InitBootPins	8	static
+../board/pin_mux.c:617:6:BOARD_InitUSBPins	16	static
+../board/pin_mux.c:683:6:BOARD_InitACCEL_I2CPins	24	static
+../board/pin_mux.c:787:6:BOARD_InitOSCPins	8	static
