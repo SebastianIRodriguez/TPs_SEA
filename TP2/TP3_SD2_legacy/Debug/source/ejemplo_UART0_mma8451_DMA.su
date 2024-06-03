@@ -1,0 +1,4 @@
+C:\Users\lraff\Documents\MCUXpressoIDE_11.5.1_7266\workspace\UART0_DMA\CMSIS/core_cm0plus.h:850:22:__NVIC_SetPriority	24	static
+C:\Users\lraff\Documents\MCUXpressoIDE_11.5.1_7266\workspace\UART0_DMA\CMSIS/core_cm0plus.h:1056:26:SysTick_Config	16	static
+../source/ejemplo_UART0_mma8451_DMA.c:73:5:main	56	static
+../source/ejemplo_UART0_mma8451_DMA.c:127:6:SysTick_Handler	8	static

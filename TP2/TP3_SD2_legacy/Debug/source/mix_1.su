@@ -1,0 +1,4 @@
+C:\Users\lraff\Documents\MCUXpressoIDE_11.5.1_7266\workspace\TP3_SD2_fusion_1\CMSIS/core_cm0plus.h:850:22:__NVIC_SetPriority	24	static
+C:\Users\lraff\Documents\MCUXpressoIDE_11.5.1_7266\workspace\TP3_SD2_fusion_1\CMSIS/core_cm0plus.h:1056:26:SysTick_Config	16	static
+../source/mix_1.c:73:5:main	120	static
+../source/mix_1.c:138:6:SysTick_Handler	40	static

@@ -1,0 +1,4 @@
+../source/display_utils.c:63:6:displayUtils_print_image	56	static
+../source/display_utils.c:97:6:displayUtils_print_accel	72	static
+../source/display_utils.c:128:6:displayUtils_show_base_image	16	static
+../source/display_utils.c:133:6:displayUtils_periodicTask1ms	24	static
