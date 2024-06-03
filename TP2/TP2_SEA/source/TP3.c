@@ -1,3 +1,5 @@
+// Hola, MCU, estoy cambiando el archivo!!! 
+// HOooooooooolaaaaa
 /* Copyright 2022, DSI FCEIA UNR - Sistemas Digitales 2
  *    DSI: http://www.dsi.fceia.unr.edu.ar/
  * Copyright 2017-2019, Gustavo Muro - Daniel Márquez
@@ -40,10 +42,9 @@
 #include "MKL43Z4.h"
 #include "pin_mux.h"
 //#include "mma8451.h"
-#include "animacion3D.h"
 #include "SD2_I2C.h"
 #include "request_manager.h"
-#include "display_utils.h"
+#include "ADC0.h"
 
 /*==================[macros and definitions]=================================*/
 
@@ -69,29 +70,25 @@ int main(void)
 	// Se inicializa el I2C
 	SD2_I2C_init();
 
-	// Oled
-	displayUtils_init();
-	displayUtils_show_base_image();
-
-	// Se inicializa la función de la animación 3D
-	animacion3D_init(110);
-
 	// Se inicializa driver de UART1
 	requestManager_init();
+
+	// Arrancamos el ADC0, conversión simple 
+	ADC0_begin();
 
 	// Se inicializa interrupción de systick cada 1 ms
 	SysTick_Config(SystemCoreClock / 1000U);
 
 	while (1)
 	{
+		// Obtiene el resultado en cuentas
+		int last_light_sensor_value = ADC0_get(LIGHT_SENSOR_CHANNEL);
 		requestManager_detect_request();
 	}
 }
 
 void SysTick_Handler(void)
 {
-	animacion3D_periodicTask1ms();
-	displayUtils_periodicTask1ms();
 }
 
 /*==================[end of file]============================================*/

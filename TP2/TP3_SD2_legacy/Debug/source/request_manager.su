@@ -1,6 +1,0 @@
-../source/request_manager.c:69:6:requestManager_init	8	static
-../source/request_manager.c:75:6:requestManager_process_led_action_request	24	static
-../source/request_manager.c:107:6:requestManager_process_switch_state_request	24	static
-../source/request_manager.c:135:6:requestManager_process_acceleration_request	48	static
-../source/request_manager.c:151:6:requestManager_process_request	24	static
-../source/request_manager.c:195:6:requestManager_detect_request	16	static

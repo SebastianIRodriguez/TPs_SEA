@@ -1,7 +1,0 @@
-{
-    "files.associations": {
-        "display_utils.h": "c",
-        "stdint.h": "c",
-        "rs485_drv.h": "c"
-    }
-}

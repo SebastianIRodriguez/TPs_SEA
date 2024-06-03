@@ -1,2 +1,0 @@
-C:\Users\lraff\Documents\MCUXpressoIDE_11.5.1_7266\workspace\TP3_SD2_Raffagnini_Rodriguez\drivers/fsl_clock.h:470:20:CLOCK_SetLpuart0Clock	16	static
-../board/board.c:25:6:BOARD_InitDebugConsole	16	static
