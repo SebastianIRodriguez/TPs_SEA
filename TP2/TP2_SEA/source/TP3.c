@@ -1,4 +1,4 @@
-// Hola, MCU, estoy cambiando el archivo!!! 
+// Hola, MCU, estoy cambiando el archivo!!!
 // HOooooooooolaaaaa
 /* Copyright 2022, DSI FCEIA UNR - Sistemas Digitales 2
  *    DSI: http://www.dsi.fceia.unr.edu.ar/
@@ -35,16 +35,20 @@
 
 /*==================[inclusions]=============================================*/
 // Project Included Files
+#include <stdio.h>
 #include "SD2_board.h"
 #include "fsl_lpuart.h"
 #include "fsl_port.h"
 #include "board.h"
 #include "MKL43Z4.h"
 #include "pin_mux.h"
-//#include "mma8451.h"
+#include "mma8451.h"
 #include "SD2_I2C.h"
+#include "rs485_drv.h"
 #include "request_manager.h"
 #include "ADC0.h"
+#include "clock_config.h"
+#include "fsl_debug_console.h"
 
 /*==================[macros and definitions]=================================*/
 
@@ -62,33 +66,65 @@
 
 int main(void)
 {
-	BOARD_BootClockRUN();
+	/* Init board hardware. */
+	BOARD_InitBootPins();
+	BOARD_InitBootClocks();
+
+	#ifndef BOARD_INIT_DEBUG_CONSOLE_PERIPHERAL
+		/* Init FSL debug console. */
+		BOARD_InitDebugConsole();
+	#endif
 
 	// Se inicializan funciones de la placa
 	board_init();
 
-	// Se inicializa el I2C
+	// Se inicializa el I2C y se inicia al sensor de aceleración
 	SD2_I2C_init();
+	mma8451_init();
+	mma8451_setDataRate(DR_50hz);
+
+	// Arrancamos el ADC0, conversión simple
+	ADC0_begin();
 
 	// Se inicializa driver de UART1
 	requestManager_init();
 
-	// Arrancamos el ADC0, conversión simple 
-	ADC0_begin();
-
 	// Se inicializa interrupción de systick cada 1 ms
 	SysTick_Config(SystemCoreClock / 1000U);
 
-	while (1)
-	{
-		// Obtiene el resultado en cuentas
-		int last_light_sensor_value = ADC0_get(LIGHT_SENSOR_CHANNEL);
-		requestManager_detect_request();
-	}
+	while (1){}
 }
 
 void SysTick_Handler(void)
 {
+	static unsigned int i = 0;
+
+	requestManager_detect_request();
+
+	if (i == 1000)
+	{
+		i = 0;
+		unsigned char buffer[21];
+
+		// Obtiene el resultado en cuentas
+		int light_value = ADC0_get(LIGHT_SENSOR_CHANNEL);
+
+		// requestManager_detect_request();
+		int16_t acc_x = mma8451_getAcX();
+		int16_t acc_y = mma8451_getAcY();
+		int16_t acc_z = mma8451_getAcZ();
+
+		bool sw1 = board_getSw(BOARD_SW_ID_1);
+		bool sw3 = board_getSw(BOARD_SW_ID_3);
+
+		sprintf((char *)buffer, ":%04d%+04d%+04d%+04d%d%d\n", light_value, acc_x, acc_y, acc_z, sw1, sw3);
+		rs485_drv_envDatos(buffer, 20);
+
+		PRINTF("Luz: %d   Aceleraciones: %d,%d,%d   Sw1: %d   Sw3: %d\r\n", light_value, acc_x, acc_y, acc_z, sw1, sw3);
+		//: LLLLAAABBBCCCS1S2'LF'
+	}
+
+	i++;
 }
 
 /*==================[end of file]============================================*/

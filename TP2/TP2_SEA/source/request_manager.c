@@ -80,7 +80,7 @@ void requestManager_process_led_action_request(uint8_t *buffer, uint8_t received
 
     board_ledId_enum requested_led_id = (received_message_id == LED_RED_MESSAGE_ID) ? BOARD_LED_ID_ROJO : BOARD_LED_ID_VERDE;
 
-    char requested_led_action = buffer[5]; //'E', 'A' o 'T'
+    char requested_led_action = buffer[3]; //'E', 'A' o 'T'
     switch (requested_led_action)
     {
     case 'E':
@@ -100,7 +100,7 @@ void requestManager_process_led_action_request(uint8_t *buffer, uint8_t received
     }
 
     // Envio el mensaje tal cual lo recibi
-    rs485_drv_envDatos(buffer, 7);
+    rs485_drv_envDatos(buffer, 5);
 }
 
 /**
@@ -126,10 +126,10 @@ void requestManager_process_switch_state_request(uint8_t *buffer, uint8_t receiv
         return;
     }
 
-    buffer[5] = (requested_sw_state) ? 'P' : 'N';
-    buffer[6] = 0x0A;
+    buffer[3] = (requested_sw_state) ? 'P' : 'N';
+    buffer[4] = 0x0A;
 
-    rs485_drv_envDatos(buffer, 7);
+    rs485_drv_envDatos(buffer, 5);
 }
 
 /**
@@ -146,7 +146,7 @@ void requestManager_process_acceleration_request(uint8_t *buffer, uint8_t receiv
     int accY = mma8451_getAcY();
     int accZ = mma8451_getAcZ();
 
-    sprintf((char *)buffer, ":2321%+04d%+04d%+04d\n", accX, accY, accZ);
+    sprintf((char *)buffer, ":%+04d%+04d%+04d\n", accX, accY, accZ);
 
     rs485_drv_envDatos(buffer, 18);
 }
@@ -155,17 +155,17 @@ void requestManager_process_request(uint8_t *buffer, int32_t request_length)
 {
     // Verifico que al menos el mensaje leido tenga la longitud del header + el terminador osea :XXZZ'LF'
     // Verifico que el identificador sea el correcto
-    if (request_length < 6 || buffer[0] != ':'|| buffer[1] != '2' || buffer[2] != '3')
+    if (request_length < 4 || buffer[0] != ':')
         return;
 
-    uint8_t received_message_type = buffer[3];
-    uint8_t received_message_id = buffer[4];
+    uint8_t received_message_type = buffer[1];
+    uint8_t received_message_id = buffer[2];
 
     switch (received_message_type)
     {
     case LED_ACTION_MESSAGE:
 
-        if (request_length != 7)
+        if (request_length != 5)
             return;
 
         requestManager_process_led_action_request(buffer, received_message_id);
@@ -174,7 +174,7 @@ void requestManager_process_request(uint8_t *buffer, int32_t request_length)
 
     case SW_STATE_MESSAGE:
 
-        if (request_length != 6)
+        if (request_length != 4)
             return;
 
         requestManager_process_switch_state_request(buffer, received_message_id);
@@ -183,7 +183,7 @@ void requestManager_process_request(uint8_t *buffer, int32_t request_length)
 
     case ACCEL_STATE_MESSAGE:
 
-        if (request_length != 6)
+        if (request_length != 4)
             return;
 
         requestManager_process_acceleration_request(buffer, received_message_id);

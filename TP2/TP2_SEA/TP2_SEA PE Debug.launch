@@ -83,8 +83,8 @@
     <booleanAttribute key="com.pemicro.debug.gdbjtag.pne.eraseOptionsenabled" value="false"/>
     <stringAttribute key="com.pemicro.debug.gdbjtag.pne.gdbClientOtherCommands" value="set mem inaccessible-by-default off&#10;set tcp auto-retry on&#10;set tcp connect-timeout 240&#10;set remotetimeout 60"/>
     <stringAttribute key="com.pemicro.debug.gdbjtag.pne.gdbClientOtherOptions" value=""/>
-    <intAttribute key="com.pemicro.debug.gdbjtag.pne.gdbServerTelnetPortNumber" value="51795"/>
-    <intAttribute key="com.pemicro.debug.gdbjtag.pne.gdbmiPortNumber" value="6225"/>
+    <intAttribute key="com.pemicro.debug.gdbjtag.pne.gdbServerTelnetPortNumber" value="51797"/>
+    <intAttribute key="com.pemicro.debug.gdbjtag.pne.gdbmiPortNumber" value="6237"/>
     <intAttribute key="com.pemicro.debug.gdbjtag.pne.jtagPreIrBits" value="0"/>
     <intAttribute key="com.pemicro.debug.gdbjtag.pne.jtagTapNumber" value="0"/>
     <stringAttribute key="com.pemicro.debug.gdbjtag.pne.macScript" value=""/>
@@ -137,7 +137,7 @@
     <stringAttribute key="com.pemicro.debug.gdbjtag.pne.sda.SWO_BAUDRATE_SWITCH_MULTILINK_VALUE" value="-1.000000"/>
     <stringAttribute key="com.pemicro.debug.gdbjtag.pne.sda.SWO_BAUDRATE_SWITCH_TARGET_VALUE" value="-1.000000"/>
     <intAttribute key="com.pemicro.debug.gdbjtag.pne.selectedCoreNumber" value="1"/>
-    <intAttribute key="com.pemicro.debug.gdbjtag.pne.serverPortNumber" value="7225"/>
+    <intAttribute key="com.pemicro.debug.gdbjtag.pne.serverPortNumber" value="7237"/>
     <booleanAttribute key="com.pemicro.debug.gdbjtag.pne.trc_eth.ALWAYS_ERASE" value="false"/>
     <stringAttribute key="com.pemicro.debug.gdbjtag.pne.trc_eth.CYCLONE_IP" value=""/>
     <booleanAttribute key="com.pemicro.debug.gdbjtag.pne.trc_eth.DO_RESET_DELAY" value="false"/>
@@ -196,12 +196,12 @@
     <booleanAttribute key="org.eclipse.cdt.dsf.gdb.NON_STOP" value="false"/>
     <booleanAttribute key="org.eclipse.cdt.dsf.gdb.UPDATE_THREADLIST_ON_SUSPEND" value="false"/>
     <intAttribute key="org.eclipse.cdt.launch.ATTR_BUILD_BEFORE_LAUNCH_ATTR" value="2"/>
-    <stringAttribute key="org.eclipse.cdt.launch.PROGRAM_NAME" value="Debug\TP3_SD1_legacy.axf"/>
-    <stringAttribute key="org.eclipse.cdt.launch.PROJECT_ATTR" value="TP3_SD1_legacy"/>
+    <stringAttribute key="org.eclipse.cdt.launch.PROGRAM_NAME" value="Debug\TP2_SEA.axf"/>
+    <stringAttribute key="org.eclipse.cdt.launch.PROJECT_ATTR" value="TP2_SEA"/>
     <booleanAttribute key="org.eclipse.cdt.launch.PROJECT_BUILD_CONFIG_AUTO_ATTR" value="false"/>
-    <stringAttribute key="org.eclipse.cdt.launch.PROJECT_BUILD_CONFIG_ID_ATTR" value="com.crt.advproject.config.exe.debug.383818824"/>
+    <stringAttribute key="org.eclipse.cdt.launch.PROJECT_BUILD_CONFIG_ID_ATTR" value="com.crt.advproject.config.exe.debug.1067693947"/>
     <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
-        <listEntry value="/TP3_SD1_legacy"/>
+        <listEntry value="/TP2_SEA"/>
     </listAttribute>
     <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
         <listEntry value="4"/>
