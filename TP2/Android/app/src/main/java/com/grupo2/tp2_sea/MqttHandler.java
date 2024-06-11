@@ -26,7 +26,6 @@ public class MqttHandler {
 
             // Set up the connection options
             MqttConnectOptions connectOptions = new MqttConnectOptions();
-            connectOptions.setAutomaticReconnect(true);
             connectOptions.setCleanSession(true);
 
             client.setCallback(new MqttCallback() {
@@ -74,7 +73,7 @@ public class MqttHandler {
 
     public void subscribe(String topic) {
         try {
-            client.subscribe(topic);
+            client.subscribe(topic, 1);
         } catch (MqttException e) {
             e.printStackTrace();
         }

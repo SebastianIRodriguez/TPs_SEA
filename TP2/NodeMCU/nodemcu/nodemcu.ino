@@ -6,7 +6,7 @@
 const char* ssid = "Siglo 21 2.4";
 const char* password = "20potrerofunes12";
 const char* mqtt_server = "rpi.local";
-const char* topic_name = "humidity";
+const char* topic_name = "grupo2/nodemcu/humedad";
 
 WiFiClient espClient;
 PubSubClient client(espClient);

@@ -1,6 +1,8 @@
 package com.grupo2.tp2_sea;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -17,10 +19,11 @@ import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final String BROKER_URL = "tcp://rpi.local:1883";
+    private static final String BROKER_URL = "tcp://192.168.0.13:1883";
     private static final String CLIENT_ID = "Android_user";
+    private static final String TOPIC_NAME = "grupo2/nodemcu/humedad";
     private MqttHandler mqttHandler;
-
+    static Handler mHandler =  new Handler();
     private TextView humidityTextView;
 
     @Override
@@ -42,13 +45,22 @@ public class MainActivity extends AppCompatActivity {
 
         mqttHandler = new MqttHandler();
         mqttHandler.connect(BROKER_URL, CLIENT_ID, this::updateUI);
-        mqttHandler.subscribe("humidity");
-        mqttHandler.publish("miTopic", "Hola, soy el celular!");
+        mqttHandler.subscribe(TOPIC_NAME);
+    }
+
+    @Override
+    protected void onDestroy() {
+        mqttHandler.disconnect();
+        super.onDestroy();
     }
 
     void updateUI(String topic, String msg) {
-        if (Objects.equals(topic, "humidity")) { // grupo2/nodemcu/humidity
-            humidityTextView.setText(msg);
+        if (Objects.equals(topic, TOPIC_NAME)) {
+            try {
+                mHandler.post(() -> humidityTextView.setText(msg));
+            } catch (Exception e) {
+                Log.i("MQTT", "Excepcion en el Textview");
+            }
         }
     }
 }
