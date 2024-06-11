@@ -21,22 +21,30 @@
 #include <ESP8266WiFi.h>
 #include <PubSubClient.h>
 
+#define WIFI_LED 14
+#define BROKER_LED 12
+#define ERROR_LED 13
+
 // Update these with values suitable for your network.
 
-const char *ssid = "Luchito Wi-Fi";
-const char *password = "00416778400";
-const char *mqtt_server = "192.168.1.120";
+//const char *ssid = "Luchito Wi-Fi";
+//const char *password = "00416778400";
+//const char *mqtt_server = "192.168.180";
+
+const char *ssid = "Laboratorio DSI";
+const char *password = "alumnolab";
+const char *mqtt_server = "192.168.100.180";
 
 // Topics
-const char *sw1_t = "KL43/sw1";
-const char *sw3_t = "KL43/sw3";
-const char *accelx_t = "KL43/accelX";
-const char *accely_t = "KL43/accelY";
-const char *accelz_t = "KL43/accelZ";
-const char *light_t = "KL43/light";
-const char *redLED_t = "KL43/redLED";
-const char *greenLED_t = "KL43/greenLED";
-const char *fail_t = "KL43/failLog";
+const char *sw1_t = "grupo2/KL43/sw1";
+const char *sw3_t = "grupo2/KL43/sw3";
+const char *accelx_t = "grupo2/KL43/accelX";
+const char *accely_t = "grupo2/KL43/accelY";
+const char *accelz_t = "grupo2/KL43/accelZ";
+const char *light_t = "grupo2/KL43/light";
+const char *redLED_t = "grupo2/KL43/redLED";
+const char *greenLED_t = "grupo2/KL43/greenLED";
+const char *fail_t = "grupo2/KL43/failLog";
 
 WiFiClient espClient;
 PubSubClient client(espClient);
@@ -69,6 +77,8 @@ void setup_wifi()
   Serial.println("WiFi connected");
   Serial.println("IP address: ");
   Serial.println(WiFi.localIP());
+
+  digitalWrite(WIFI_LED, HIGH);
 }
 
 void callback(char *topic, byte *payload, unsigned int length)
@@ -102,7 +112,16 @@ void callback(char *topic, byte *payload, unsigned int length)
       res[i] = 0;
 
       if (strcmp(res, mes) != 0)
-        client.publish(fail_t, "Error sending green LED");
+      {
+        char text[40];
+        sprintf(text, "Error sending green LED %c instruction", value);
+        client.publish(fail_t, text);
+        digitalWrite(ERROR_LED, HIGH);
+      }
+      else
+      {
+        digitalWrite(ERROR_LED, LOW);
+      }
     }
   }
 
@@ -125,7 +144,16 @@ void callback(char *topic, byte *payload, unsigned int length)
       res[i] = 0;
 
       if (strcmp(res, mes) != 0)
-        client.publish(fail_t, "Error sending red LED");
+      {
+        char text[40];
+        sprintf(text, "Error sending red LED %c instruction", value);
+        client.publish(fail_t, text);
+        digitalWrite(ERROR_LED, HIGH);
+      }
+      else
+      {
+        digitalWrite(ERROR_LED, LOW);
+      }
     }
   }
 }
@@ -142,12 +170,12 @@ void reconnect()
     // Attempt to connect
     if (client.connect(clientId.c_str()))
     {
-      Serial.println("connected");
       // Once connected, publish an announcement...
-      client.publish("outTopic", "hello world");
+      client.publish(fail_t, "Device on");
       // ... and resubscribe
       client.subscribe(redLED_t);
       client.subscribe(greenLED_t);
+      digitalWrite(BROKER_LED, HIGH);
     }
     else
     {
@@ -162,8 +190,15 @@ void reconnect()
 
 void setup()
 {
-  pinMode(BUILTIN_LED, OUTPUT); // Initialize the BUILTIN_LED pin as an output
   Serial.begin(115200);
+  pinMode(WIFI_LED, OUTPUT);
+  pinMode(BROKER_LED, OUTPUT);
+  pinMode(ERROR_LED, OUTPUT);
+
+  digitalWrite(WIFI_LED, LOW);
+  digitalWrite(BROKER_LED, LOW);
+  digitalWrite(ERROR_LED, LOW);
+
   setup_wifi();
   client.setServer(mqtt_server, 1883);
   client.setCallback(callback);
@@ -178,6 +213,7 @@ void loop()
 
   if (!client.connected())
   {
+    digitalWrite(BROKER_LED, LOW);
     reconnect();
   }
   client.loop();
@@ -187,9 +223,8 @@ void loop()
     char c = Serial.read();
     if (c == '\n')
     {
-      len = 0;
       // Verificamos cositas
-      if (buf[0] == ':')
+      if (buf[0] == ':' && len == MAX_MES_LEN - 1)
       {
         char light[5];
         char acc_x[5];
@@ -254,6 +289,7 @@ void loop()
           strcpy(aux, "Not pressed");
         client.publish(sw3_t, aux);
       }
+      len = 0;
     }
     else
     {
