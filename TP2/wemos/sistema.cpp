@@ -49,139 +49,6 @@ bool greenLED_state = 0;
 /*==================[internal functions definition]==========================*/
 
 /**
- * @brief Método de callback que se ejecuta si se recibe un mensaje por mqtt
- *
- * @param topic topic desde el cual se recibe el mensaje
- * @param payload mensaje
- * @param length longitud del mensaje
- */
-void callback(char *topic, byte *payload, unsigned int length)
-{
-    // Estado del led verde
-    if (strcmp(topic, greenLED_t) == 0)
-    {
-        // Verificación de seguridad
-        char value = payload[0];
-        if (length == 1 && (value == 'A' || value == 'E' || value == 'T'))
-        {
-            char mes[7];
-            char res[7];
-            int i = 0;
-            sprintf(mes, ":02%c\n", value);
-            Serial.print(mes);
-            delay(10);
-
-            /*while (Serial.available())
-                res[i++] = Serial.read();
-            res[i] = 0;
-
-            if (strcmp(res, mes) != 0)
-            {
-                char text[40];
-                sprintf(text, "Error sending green LED %c instruction", value);
-                client.publish(fail_t, text);
-                digitalWrite(ERROR_LED, HIGH);
-            }
-            else
-            {
-                // La KL confirmó el mensaje!
-                char aux[2];
-                switch (value)
-                {
-                case 'T':
-                    greenLED_state = !greenLED_state;
-                    break;
-                case 'A':
-                    greenLED_state = 0;
-                    break;
-                case 'E':
-                    greenLED_state = 1;
-                    break;
-
-                default:
-                    break;
-                }
-
-                sprintf(aux, "%d", greenLED_state);
-                client.publish(greenLEDstate_t, aux);
-                digitalWrite(ERROR_LED, LOW);
-            }*/
-        }
-    }
-
-    // Estado del led rojo
-    if (strcmp(topic, redLED_t) == 0)
-    {
-        // Verificación de seguridad
-        char value = payload[0];
-        if (length == 1 && (value == 'A' || value == 'E' || value == 'T'))
-        {
-            char mes[7];
-            char res[7];
-            int i = 0;
-            sprintf(mes, ":01%c\n", value);
-            Serial.print(mes);
-            delay(10);
-
-            /*while (Serial.available())
-                res[i++] = Serial.read();
-            res[i] = 0;
-
-            if (strcmp(res, mes) != 0)
-            {
-                char text[40];
-                sprintf(text, "Error sending red LED %c instruction", value);
-                client.publish(fail_t, text);
-                digitalWrite(ERROR_LED, HIGH);
-            }
-            else
-            {
-
-                digitalWrite(ERROR_LED, LOW);
-            }*/
-        }
-    }
-}
-
-/**
- * @brief Método que se llama para (re)conectarese al broker MQTT
- *
- */
-void reconnect()
-{
-    // Loop until we're reconnected
-    while (!client.connected())
-    {
-        if (DEBUG)
-            Serial.println("Attempting MQTT connection...");
-
-        digitalWrite(BROKER_LED, LOW);
-
-        if (client.connect("KL43"))
-        {
-            // Damos aviso que estamos conectados
-            client.publish(fail_t, "Device on");
-
-            //  Y nos subscribimos a los topics correspondientes
-            client.subscribe(redLED_t);
-            client.subscribe(greenLED_t);
-            digitalWrite(BROKER_LED, HIGH);
-        }
-        else
-        {
-            unsigned int tiempo_i = millis();
-            while (millis() - tiempo_i < 5000)
-            {
-                digitalWrite(BROKER_LED, HIGH);
-                delay(250);
-                digitalWrite(BROKER_LED, LOW);
-                delay(250);
-            }
-        }
-    }
-}
-
-/**
  * @brief Analiza el buffer recibido en busca de comandoso y reacciona en función de ellos
  *
  * @param buf buffer recibido
@@ -196,8 +63,6 @@ void decode(char *buf, int len)
         char acc_x[7];
         char acc_y[7];
         char acc_z[7];
-        // bool sw1;
-        // bool sw3;
         char aux[15];
         float acc_value;
         float light_value;
@@ -257,6 +122,7 @@ void decode(char *buf, int len)
         char led = buf[2];
         char accion = buf[3];
         bool *ledstate;
+        bool previous;
         const char *ledstate_t;
         char aux[2];
 
@@ -280,6 +146,8 @@ void decode(char *buf, int len)
             ledstate_t = greenLEDstate_t;
         }
 
+        previous = *ledstate;
+
         switch (accion)
         {
         case 'T':
@@ -296,8 +164,11 @@ void decode(char *buf, int len)
             break;
         }
 
-        sprintf(aux, "%d", *ledstate);
-        client.publish(ledstate_t, aux);
+        if (previous != *ledstate)
+        {
+            sprintf(aux, "%d", *ledstate);
+            client.publish(ledstate_t, aux, 1);
+        }
     }
 
     // Es un aviso de switch
@@ -319,6 +190,168 @@ void decode(char *buf, int len)
             sw3_state = sw3;
             sw[0] = sw3_state + 48;
             client.publish(sw3_t, sw, 1);
+        }
+    }
+}
+
+void listen_serial()
+{
+    static char buf[22];
+    static int len = 0;
+
+    while (Serial.available())
+    {
+        char c = Serial.read();
+        if (c == '\n')
+        {
+            decode(buf, len);
+            len = 0;
+        }
+        else
+        {
+            if (c == ':')
+                len = 0;
+
+            buf[len++] = c;
+            if (len > MAX_MES_LEN)
+                len = 0;
+        }
+    }
+}
+
+/**
+ * @brief Método de callback que se ejecuta si se recibe un mensaje por mqtt
+ *
+ * @param topic topic desde el cual se recibe el mensaje
+ * @param payload mensaje
+ * @param length longitud del mensaje
+ */
+void callback(char *topic, byte *payload, unsigned int length)
+{
+    // Comando del led verde
+    if (strcmp(topic, greenLED_t) == 0)
+    {
+        // Verificación de seguridad
+        char value = payload[0];
+        if (length == 1 && (value == 'A' || value == 'E' || value == 'T'))
+        {
+            char mes[7];
+            int i = 0;
+            sprintf(mes, ":02%c\n", value);
+            Serial.print(mes);
+            delay(10);
+        }
+    }
+
+    // Comando del led rojo
+    if (strcmp(topic, redLED_t) == 0)
+    {
+        // Verificación de seguridad
+        char value = payload[0];
+        if (length == 1 && (value == 'A' || value == 'E' || value == 'T'))
+        {
+            char mes[7];
+            int i = 0;
+            sprintf(mes, ":01%c\n", value);
+            Serial.print(mes);
+            delay(10);
+        }
+    }
+
+    // Estado del led rojo
+    if (strcmp(topic, redLEDstate_t) == 0)
+    {
+        // Verificación de seguridad
+        char value = payload[0];
+        if (length == 1 && (value == '1' || value == '0'))
+        {
+            // Nos desubscribimos
+            client.unsubscribe(redLEDstate_t);
+            char mes[7];
+            bool desired_state = value - 48;
+            char action = (value == '1' ? 'E' : 'A');
+            int i = 0;
+
+            // Enviamos el valor deseado del led a la KL y esperamos que nos lo confirme
+            sprintf(mes, ":01%c\n", action);
+            Serial.print(mes);
+            delay(30);
+            listen_serial();
+            while (desired_state != redLED_state)
+            {
+                Serial.print(mes);
+                delay(30);
+                listen_serial();
+            }
+        }
+    }
+
+    // Estad del led verde
+    if (strcmp(topic, greenLEDstate_t) == 0)
+    {
+        // Verificación de seguridad
+        char value = payload[0];
+        if (length == 1 && (value == '1' || value == '0'))
+        {
+            // Nos desubscribimos
+            client.unsubscribe(greenLEDstate_t);
+            char mes[7];
+            bool desired_state = value - 48;
+            char action = (value == '1' ? 'E' : 'A');
+            int i = 0;
+
+            // Enviamos el valor deseado del led a la KL y esperamos que nos lo confirme
+            sprintf(mes, ":02%c\n", action);
+            Serial.print(mes);
+            delay(30);
+            listen_serial();
+            while (desired_state != greenLED_state)
+            {
+                Serial.print(mes);
+                delay(30);
+                listen_serial();
+            }
+        }
+    }
+}
+
+/**
+ * @brief Método que se llama para (re)conectarese al broker MQTT
+ *
+ */
+void reconnect()
+{
+    // Loop until we're reconnected
+    while (!client.connected())
+    {
+        if (DEBUG)
+            Serial.println("Attempting MQTT connection...");
+
+        digitalWrite(BROKER_LED, LOW);
+
+        if (client.connect("KL43"))
+        {
+            // Damos aviso que estamos conectados
+            client.publish(fail_t, "Device on");
+
+            //  Y nos subscribimos a los topics correspondientes
+            client.subscribe(redLED_t);        // Comando del led rojo
+            client.subscribe(greenLED_t);      // Comando del led verde
+            client.subscribe(redLEDstate_t);   // Estado del led rojo
+            client.subscribe(greenLEDstate_t); // Estado del led verde
+
+            digitalWrite(BROKER_LED, HIGH);
+        }
+        else
+        {
+            unsigned int tiempo_i = millis();
+            while (millis() - tiempo_i < 5000)
+            {
+                digitalWrite(BROKER_LED, HIGH);
+                delay(250);
+                digitalWrite(BROKER_LED, LOW);
+                delay(250);
+            }
         }
     }
 }
@@ -390,9 +423,6 @@ void sistema_begin()
  */
 void sistema_run()
 {
-    static char buf[22];
-    static int len = 0;
-
     // Verificamos conexión al broker MQTT
     if (!client.connected())
     {
@@ -404,23 +434,7 @@ void sistema_run()
     client.loop();
 
     // Escuchamos el puerto de la KL43
-    while (Serial.available())
-    {
-        char c = Serial.read();
-        if (c == '\n')
-        {
-            decode(buf, len);
-            len = 0;
-        }
-        else
-        {
-            if (c == ':')
-                len = 0;
-
-            buf[len++] = c;
-            if (len > MAX_MES_LEN)
-                len = 0;
-        }
-    }
+    listen_serial();
 }
+
 /*==================[end of file]============================================*/

@@ -13,6 +13,8 @@
 
 void setup()
 {
+  // Esperamos que la KL arranque todo
+  delay(2000);
   sistema_begin();
 }
 
