@@ -98,10 +98,33 @@ int main(void)
 void SysTick_Handler(void)
 {
 	static unsigned int i = 0;
+	static bool sw1_state = 0;
+	static bool sw3_state = 0;
 
+	// Analizamos en busca de algún comando que haya llegado
 	requestManager_detect_request();
 
-	if (i == 1000)
+	// Verificamos si hubo un cambio en los switches
+	bool new_sw1_state = board_getSw(BOARD_SW_ID_1);
+	bool new_sw3_state = board_getSw(BOARD_SW_ID_3);
+
+	if(new_sw1_state != sw1_state || new_sw3_state != sw3_state)
+	{
+		unsigned char buffer[5] = "!";
+		sw1_state = new_sw1_state;
+		sw3_state = new_sw3_state;
+
+		char data = sw1_state;
+		data |= sw3_state << 1;
+
+		buffer[1] = data;
+		buffer[2] = '\n';
+
+		rs485_drv_envDatos(buffer, 3);
+
+	}
+
+	if (i == 500)
 	{
 		i = 0;
 		unsigned char buffer[21];
@@ -114,13 +137,14 @@ void SysTick_Handler(void)
 		int16_t acc_y = mma8451_getAcY();
 		int16_t acc_z = mma8451_getAcZ();
 
-		bool sw1 = board_getSw(BOARD_SW_ID_1);
-		bool sw3 = board_getSw(BOARD_SW_ID_3);
+		//bool sw1 = board_getSw(BOARD_SW_ID_1);
+		//bool sw3 = board_getSw(BOARD_SW_ID_3);
 
-		sprintf((char *)buffer, ":%04d%+04d%+04d%+04d%d%d\n", light_value, acc_x, acc_y, acc_z, sw1, sw3);
-		rs485_drv_envDatos(buffer, 20);
+		//sprintf((char *)buffer, ":%04d%+04d%+04d%+04d%d%d\n", light_value, acc_x, acc_y, acc_z, sw1, sw3);
+		sprintf((char *)buffer, ":%04d%+04d%+04d%+04d\n", light_value, acc_x, acc_y, acc_z);
+		rs485_drv_envDatos(buffer, 18);
 
-		PRINTF("Luz: %d   Aceleraciones: %d,%d,%d   Sw1: %d   Sw3: %d\r\n", light_value, acc_x, acc_y, acc_z, sw1, sw3);
+		PRINTF("Luz: %d   Aceleraciones: %d,%d,%d\r\n", light_value, acc_x, acc_y, acc_z);
 		//: LLLLAAABBBCCCS1S2'LF'
 	}
 
