@@ -1,51 +1,75 @@
 package com.grupo2.tp2_sea;
 
 import android.os.Bundle;
-import android.os.Handler;
-import android.util.Log;
-import android.view.View;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.OnApplyWindowInsetsListener;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+import androidx.lifecycle.MutableLiveData;
 
-import java.util.Objects;
+import com.grupo2.tp2_sea.ui.UIKt;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String BROKER_URL = "tcp://192.168.0.13:1883";
     private static final String CLIENT_ID = "Android_user";
-    private static final String TOPIC_NAME = "grupo2/nodemcu/humedad";
+    private static final String TOPIC_HUMIDITY = "grupo2/nodemcu/humedad";
+    private static final String TOPIC_TEMPERATURE = "grupo2/rpi/temperatura";
+    private static final String TOPIC_ACCELX = "grupo2/KL43/accelX";
+    private static final String TOPIC_ACCELY = "grupo2/KL43/accelY";
+    private static final String TOPIC_ACCELZ = "grupo2/KL43/accelZ";
+    private static final String TOPIC_LIGHT = "grupo2/KL43/light";
+    private static final String TOPIC_SW1 = "grupo2/KL43/sw1";
+    private static final String TOPIC_SW3 = "grupo2/KL43/sw3";
+    private static final String TOPIC_RED_LED = "grupo2/KL43/redLED";
+    private static final String TOPIC_GREEN_LED = "grupo2/KL43/greenLED";
     private MqttHandler mqttHandler;
-    static Handler mHandler =  new Handler();
     private TextView humidityTextView;
+
+    private final MutableLiveData<String> humidity = new MutableLiveData<String>();
+    private final MutableLiveData<String> temperature = new MutableLiveData<String>();
+    private final MutableLiveData<String> accelX = new MutableLiveData<String>();
+    private final MutableLiveData<String> accelY = new MutableLiveData<String>();
+    private final MutableLiveData<String> accelZ = new MutableLiveData<String>();
+    private final MutableLiveData<String> light = new MutableLiveData<String>();
+    private final MutableLiveData<String> sw1 = new MutableLiveData<String>();
+    private final MutableLiveData<String> sw3 = new MutableLiveData<String>();
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_main);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), new OnApplyWindowInsetsListener() {
-            @NonNull
-            @Override
-            public WindowInsetsCompat onApplyWindowInsets(@NonNull View v, @NonNull WindowInsetsCompat insets) {
-                Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-                v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-                return insets;
-            }
-        });
-
-        humidityTextView = findViewById(R.id.humedad);
+        UIKt.renderUI(
+                this,
+                humidity,
+                temperature,
+                accelX,
+                accelY,
+                accelZ,
+                light,
+                sw1,
+                sw3,
+                () -> {
+                    onToggleRedLed();
+                    return null;
+                },
+                () -> {
+                    onToggleGreenLed();
+                    return null;
+                }
+        );
 
         mqttHandler = new MqttHandler();
         mqttHandler.connect(BROKER_URL, CLIENT_ID, this::updateUI);
-        mqttHandler.subscribe(TOPIC_NAME);
+        mqttHandler.subscribe(TOPIC_HUMIDITY);
+        mqttHandler.subscribe(TOPIC_TEMPERATURE);
+        mqttHandler.subscribe(TOPIC_ACCELX);
+        mqttHandler.subscribe(TOPIC_ACCELY);
+        mqttHandler.subscribe(TOPIC_ACCELZ);
+        mqttHandler.subscribe(TOPIC_LIGHT);
+        mqttHandler.subscribe(TOPIC_SW1);
+        mqttHandler.subscribe(TOPIC_SW3);
     }
 
     @Override
@@ -55,12 +79,39 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void updateUI(String topic, String msg) {
-        if (Objects.equals(topic, TOPIC_NAME)) {
-            try {
-                mHandler.post(() -> humidityTextView.setText(msg));
-            } catch (Exception e) {
-                Log.i("MQTT", "Excepcion en el Textview");
-            }
+        switch (topic) {
+            case TOPIC_HUMIDITY:
+                humidity.postValue(msg);
+                break;
+            case TOPIC_TEMPERATURE:
+                temperature.postValue(msg);
+                break;
+            case TOPIC_ACCELX:
+                accelX.postValue(msg);
+                break;
+            case TOPIC_ACCELY:
+                accelY.postValue(msg);
+                break;
+            case TOPIC_ACCELZ:
+                accelZ.postValue(msg);
+                break;
+            case TOPIC_LIGHT:
+                light.postValue(msg);
+                break;
+            case TOPIC_SW1:
+                sw1.postValue(msg);
+                break;
+            case TOPIC_SW3:
+                sw3.postValue(msg);
+                break;
         }
+    }
+
+    void onToggleRedLed() {
+        mqttHandler.publish(TOPIC_RED_LED, "T");
+    }
+
+    void onToggleGreenLed() {
+        mqttHandler.publish(TOPIC_RED_LED, "T");
     }
 }
