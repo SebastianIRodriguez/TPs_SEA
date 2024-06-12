@@ -26,17 +26,19 @@ const char *light_t = "grupo2/KL43/light";                 // Topic donde se pub
 const char *redLED_t = "grupo2/KL43/redLEDcommand";        // Topic desde donde se lee los comandos para el led rojo
 const char *greenLED_t = "grupo2/KL43/greenLEDcommand";    // Topic desde donde se lee los comandos para el led verde
 const char *greenLEDstate_t = "grupo2/KL43/greenLEDstate"; // Topic donde se reporta el estado del led verde
-const char *redLEDstate_t = "grupo2/KL43/greenLEDstate";   // Topic donde se reporta el estado del led rojo
+const char *redLEDstate_t = "grupo2/KL43/redLEDstate";     // Topic donde se reporta el estado del led rojo
 const char *fail_t = "grupo2/KL43/failLog";                // Topic donde se publican los fallos que haya tenido el sistema
 
 // Parámetros de red
 const char *ssid = "Luchito Wi-Fi";
 const char *password = "00416778400";
-const char *mqtt_server = "192.168.1.123";
+const char *mqtt_server = "192.168.1.124";
 
-// Estado de los sw
+// Estado de los elementos de la KL
 bool sw1_state = 0;
 bool sw3_state = 0;
+bool redLED_state = 0;
+bool greenLED_state = 0;
 
 /*==================[internal functions declaration]=========================*/
 
@@ -66,10 +68,10 @@ void callback(char *topic, byte *payload, unsigned int length)
             char res[7];
             int i = 0;
             sprintf(mes, ":02%c\n", value);
-            Serial.printf(mes);
-            delay(50);
+            Serial.print(mes);
+            delay(10);
 
-            while (Serial.available())
+            /*while (Serial.available())
                 res[i++] = Serial.read();
             res[i] = 0;
 
@@ -82,8 +84,28 @@ void callback(char *topic, byte *payload, unsigned int length)
             }
             else
             {
+                // La KL confirmó el mensaje!
+                char aux[2];
+                switch (value)
+                {
+                case 'T':
+                    greenLED_state = !greenLED_state;
+                    break;
+                case 'A':
+                    greenLED_state = 0;
+                    break;
+                case 'E':
+                    greenLED_state = 1;
+                    break;
+
+                default:
+                    break;
+                }
+
+                sprintf(aux, "%d", greenLED_state);
+                client.publish(greenLEDstate_t, aux);
                 digitalWrite(ERROR_LED, LOW);
-            }
+            }*/
         }
     }
 
@@ -98,10 +120,10 @@ void callback(char *topic, byte *payload, unsigned int length)
             char res[7];
             int i = 0;
             sprintf(mes, ":01%c\n", value);
-            Serial.printf(mes);
-            delay(50);
+            Serial.print(mes);
+            delay(10);
 
-            while (Serial.available())
+            /*while (Serial.available())
                 res[i++] = Serial.read();
             res[i] = 0;
 
@@ -114,8 +136,9 @@ void callback(char *topic, byte *payload, unsigned int length)
             }
             else
             {
+
                 digitalWrite(ERROR_LED, LOW);
-            }
+            }*/
         }
     }
 }
@@ -131,7 +154,7 @@ void reconnect()
     {
         if (DEBUG)
             Serial.println("Attempting MQTT connection...");
-            
+
         digitalWrite(BROKER_LED, LOW);
 
         if (client.connect("KL43"))
@@ -166,6 +189,7 @@ void reconnect()
  */
 void decode(char *buf, int len)
 {
+    // Es un reporte de aceleración y luz
     if (buf[0] == ':' && len == MAX_MES_LEN - 1)
     {
         char light[8];
@@ -219,30 +243,64 @@ void decode(char *buf, int len)
         acc_value = atof(acc_z) / 100.0;
         sprintf(acc_z, "%.2f", acc_value);
 
-        /*sw1 = buf[17] - 48;
-         sw3 = buf[18] - 48;*/
-
-        // El 18 es el \n
-
         // Publicamos
         client.publish(light_t, light);
         client.publish(accelx_t, acc_x);
         client.publish(accely_t, acc_y);
         client.publish(accelz_t, acc_z);
-
-        /*if (sw1)
-            strcpy(aux, "Pressed");
-        else
-            strcpy(aux, "Not pressed");
-        client.publish(sw1_t, aux);
-
-        if (sw3)
-            strcpy(aux, "Pressed");
-        else
-            strcpy(aux, "Not pressed");
-        client.publish(sw3_t, aux);*/
     }
 
+    // Es una respuesta a comando
+    if (buf[0] == ':' && buf[1] == '0' && len == 4)
+    {
+        // Formato :0xy, donde "x" es el led e "y" es la acción realizada
+        char led = buf[2];
+        char accion = buf[3];
+        bool *ledstate;
+        const char *ledstate_t;
+        char aux[2];
+
+        // Verifico que el numero de led sea válido
+        if (led != '1' && led != '2')
+            return;
+
+        // Verifico que la acción sea valida
+        if (accion != 'A' && accion != 'E' && accion != 'T')
+            return;
+
+        // Es el led rojo?
+        if (led == '1')
+        {
+            ledstate = &redLED_state;
+            ledstate_t = redLEDstate_t;
+        }
+        else
+        {
+            ledstate = &greenLED_state;
+            ledstate_t = greenLEDstate_t;
+        }
+
+        switch (accion)
+        {
+        case 'T':
+            *ledstate = !(*ledstate);
+            break;
+        case 'A':
+            *ledstate = 0;
+            break;
+        case 'E':
+            *ledstate = 1;
+            break;
+
+        default:
+            break;
+        }
+
+        sprintf(aux, "%d", *ledstate);
+        client.publish(ledstate_t, aux);
+    }
+
+    // Es un aviso de switch
     if (buf[0] == '!' && len == SWITCH_MESSAGE_LEN)
     {
         bool sw1 = buf[1] & 0b1;
@@ -253,14 +311,14 @@ void decode(char *buf, int len)
         {
             sw1_state = sw1;
             sw[0] = sw1_state + 48;
-            client.publish(sw1_t, sw);
+            client.publish(sw1_t, sw, 1);
         }
 
         if (sw3_state != sw3)
         {
             sw3_state = sw3;
             sw[0] = sw3_state + 48;
-            client.publish(sw3_t, sw);
+            client.publish(sw3_t, sw, 1);
         }
     }
 }
