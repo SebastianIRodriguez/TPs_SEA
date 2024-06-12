@@ -54,7 +54,7 @@ client.loop_start()
 try:
     while (1):
 	    time.sleep(period)
-	    client.publish(temp_topic,cpu.temperature)
+	    client.publish(temp_topic,"{temp:.2f}".format(temp=cpu.temperature))
 	
 except KeyboardInterrupt:
     print("Hasta la proximaaaa")
