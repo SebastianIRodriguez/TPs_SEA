@@ -17,22 +17,22 @@ WiFiClient espClient;
 PubSubClient client(espClient);
 
 // Topics
-const char *sw1_t = "grupo2/KL43/sw1";                     // Topic donde se publica el estado del SW1
-const char *sw3_t = "grupo2/KL43/sw3";                     // Topic donde se publica el estado del SW3
-const char *accelx_t = "grupo2/KL43/accelX";               // Topic donde se publica la aceleración X
-const char *accely_t = "grupo2/KL43/accelY";               // Topic donde se publica la aceleración y
-const char *accelz_t = "grupo2/KL43/accelZ";               // Topic donde se publica la aceleración Z
-const char *light_t = "grupo2/KL43/light";                 // Topic donde se publica el nivel de luz
-const char *redLED_t = "grupo2/KL43/redLEDcommand";        // Topic desde donde se lee los comandos para el led rojo
-const char *greenLED_t = "grupo2/KL43/greenLEDcommand";    // Topic desde donde se lee los comandos para el led verde
-const char *greenLEDstate_t = "grupo2/KL43/greenLEDstate"; // Topic donde se reporta el estado del led verde
-const char *redLEDstate_t = "grupo2/KL43/redLEDstate";     // Topic donde se reporta el estado del led rojo
-const char *fail_t = "grupo2/KL43/failLog";                // Topic donde se publican los fallos que haya tenido el sistema
+const char *sw1_t = "grupo2/KL43/sw/sw1";                   // Topic donde se publica el estado del SW1
+const char *sw3_t = "grupo2/KL43/sw/sw3";                   // Topic donde se publica el estado del SW3
+const char *accelx_t = "grupo2/KL43/accel/X";               // Topic donde se publica la aceleración X
+const char *accely_t = "grupo2/KL43/accel/Y";               // Topic donde se publica la aceleración y
+const char *accelz_t = "grupo2/KL43/accel/Z";               // Topic donde se publica la aceleración Z
+const char *light_t = "grupo2/KL43/light";                  // Topic donde se publica el nivel de luz
+const char *redLED_t = "grupo2/KL43/LEDcommand/red";        // Topic desde donde se lee los comandos para el led rojo
+const char *greenLED_t = "grupo2/KL43/LEDcommand/green";    // Topic desde donde se lee los comandos para el led verde
+const char *greenLEDstate_t = "grupo2/KL43/LEDstate/green"; // Topic donde se reporta el estado del led verde
+const char *redLEDstate_t = "grupo2/KL43/LEDstate/red";     // Topic donde se reporta el estado del led rojo
+const char *log_t = "grupo2/KL43/log";                 // Topic donde se publican los fallos que haya tenido el sistema
 
 // Parámetros de red
-const char *ssid = "Luchito Wi-Fi";
-const char *password = "00416778400";
-const char *mqtt_server = "192.168.1.124";
+const char *ssid = "Siglo 21 2.4";
+const char *password = "20potrerofunes12";
+const char *mqtt_server = "rpi.local";
 
 // Estado de los elementos de la KL
 bool sw1_state = 0;
@@ -329,10 +329,10 @@ void reconnect()
 
         digitalWrite(BROKER_LED, LOW);
 
-        if (client.connect("KL43"))
+        if (client.connect("KL43", log_t, 1, 0, "Device disconnected"))
         {
             // Damos aviso que estamos conectados
-            client.publish(fail_t, "Device on");
+            client.publish(log_t, "Device connected");
 
             //  Y nos subscribimos a los topics correspondientes
             client.subscribe(redLED_t);        // Comando del led rojo
@@ -408,7 +408,6 @@ void sistema_begin()
     digitalWrite(WIFI_LED, HIGH);
 
     // Configuramos el servidor mqtt y la función de callback
-    // client.setClient(espClient);
     client.setServer(mqtt_server, 1883);
     client.setCallback(callback);
 
