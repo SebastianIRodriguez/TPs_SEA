@@ -1,817 +1,32 @@
 [
     {
-        "id": "b9f522d81099a9f6",
-        "type": "tab",
-        "label": "Flow 1",
-        "disabled": false,
-        "info": "",
-        "env": []
-    },
-    {
-        "id": "684c6eb8d1a2bdca",
-        "type": "group",
-        "z": "b9f522d81099a9f6",
-        "name": "Aceleracion",
-        "style": {
-            "label": true
-        },
-        "nodes": [
-            "09389954e452859b",
-            "b8f4daca0fe34f09",
-            "683a7f129f7b86be",
-            "2ff8b26e17f874d6",
-            "d5e8108357f0d2f1",
-            "d8b314bbb15a201b",
-            "198e134888707c07",
-            "97c2f3b00ecfac0b",
-            "99dd4be7a7ab5745",
-            "4bb29916ba0d135e",
-            "7c2df2c680c047a8",
-            "2045d8efaa8b490a",
-            "ee07669c5b7378de",
-            "fce463b99161e693",
-            "64d53c806ed4d4b3"
-        ],
-        "x": 14,
-        "y": 19,
-        "w": 552,
-        "h": 442
-    },
-    {
         "id": "1f62df5a32ae8a29",
         "type": "group",
-        "z": "b9f522d81099a9f6",
+        "z": "a71001d0309543c3",
         "name": "Switches",
         "style": {
             "label": true
         },
         "nodes": [
             "8a3eb40024e57c96",
-            "2886f7d5a6025b35",
-            "a30a1b0e423d47cf",
             "6ea8814eac3c6c1f",
             "3f91cbcbe6e08d5f",
-            "5c645562ac2f5a0d",
-            "f8ae541f4a67efa7",
             "769adb57cecfa7dd",
-            "5bd67452d291266e",
-            "85df10c4aff746a6"
+            "8c62c7e408cd3b6b",
+            "cd255ba37b76c0ab"
         ],
-        "x": 574,
-        "y": 19,
-        "w": 552,
-        "h": 302
-    },
-    {
-        "id": "a9a9e84ed3ce3fa5",
-        "type": "group",
-        "z": "b9f522d81099a9f6",
-        "name": "LEDs Control",
-        "style": {
-            "label": true
-        },
-        "nodes": [
-            "f53671c5584b674c",
-            "0195fcfd720c0ad1",
-            "fdf711e259ed2d53",
-            "70fa4bb3d85210ce"
-        ],
-        "x": 1154,
-        "y": 19,
+        "x": 834,
+        "y": 959,
         "w": 452,
-        "h": 142
-    },
-    {
-        "id": "f53671c5584b674c",
-        "type": "ui_button",
-        "z": "b9f522d81099a9f6",
-        "g": "a9a9e84ed3ce3fa5",
-        "name": "",
-        "group": "841367fba213482c",
-        "order": 6,
-        "width": 3,
-        "height": 1,
-        "passthru": false,
-        "label": "Led Rojo",
-        "tooltip": "",
-        "color": "",
-        "bgcolor": "#FF0000",
-        "className": "",
-        "icon": "",
-        "payload": "T",
-        "payloadType": "str",
-        "topic": "topic",
-        "topicType": "msg",
-        "x": 1240,
-        "y": 60,
-        "wires": [
-            [
-                "fdf711e259ed2d53"
-            ]
-        ]
-    },
-    {
-        "id": "0195fcfd720c0ad1",
-        "type": "ui_button",
-        "z": "b9f522d81099a9f6",
-        "g": "a9a9e84ed3ce3fa5",
-        "name": "",
-        "group": "841367fba213482c",
-        "order": 13,
-        "width": 3,
-        "height": 1,
-        "passthru": false,
-        "label": "Led Verde",
-        "tooltip": "",
-        "color": "",
-        "bgcolor": "#00FF00",
-        "className": "",
-        "icon": "",
-        "payload": "T",
-        "payloadType": "str",
-        "topic": "topic",
-        "topicType": "msg",
-        "x": 1250,
-        "y": 120,
-        "wires": [
-            [
-                "70fa4bb3d85210ce"
-            ]
-        ]
-    },
-    {
-        "id": "a87d38c97faeb35d",
-        "type": "mqtt in",
-        "z": "b9f522d81099a9f6",
-        "name": "",
-        "topic": "grupo2/nodemcu/humedad",
-        "qos": "0",
-        "datatype": "auto-detect",
-        "broker": "30ec7003649288df",
-        "nl": false,
-        "rap": true,
-        "rh": 0,
-        "inputs": 0,
-        "x": 130,
-        "y": 740,
-        "wires": [
-            [
-                "47def59083daee27",
-                "7faad5b501046ac4",
-                "9ffad8b60b69bd46"
-            ]
-        ]
-    },
-    {
-        "id": "47def59083daee27",
-        "type": "function",
-        "z": "b9f522d81099a9f6",
-        "name": "inserta",
-        "func": "msg.topic=\"insert into registro_humedad (timestamp,humedad) values ('\"+Date.now()+ \"','\" +msg.payload+ \"')\" ;\nreturn msg;",
-        "outputs": 1,
-        "timeout": "",
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 330,
-        "y": 740,
-        "wires": [
-            [
-                "e2cd3c6b3cb00bf3"
-            ]
-        ]
-    },
-    {
-        "id": "e2cd3c6b3cb00bf3",
-        "type": "mysql",
-        "z": "b9f522d81099a9f6",
-        "mydb": "9db82ae2.8d0038",
-        "name": "",
-        "x": 470,
-        "y": 740,
-        "wires": [
-            []
-        ]
-    },
-    {
-        "id": "2f0ef0cdc5b769af",
-        "type": "inject",
-        "z": "b9f522d81099a9f6",
-        "name": "",
-        "props": [
-            {
-                "p": "payload"
-            },
-            {
-                "p": "topic",
-                "vt": "str"
-            }
-        ],
-        "repeat": "1",
-        "crontab": "",
-        "once": false,
-        "onceDelay": 0.1,
-        "topic": "",
-        "payload": "",
-        "payloadType": "date",
-        "x": 100,
-        "y": 860,
-        "wires": [
-            [
-                "c9ec97c66a405d69"
-            ]
-        ]
-    },
-    {
-        "id": "c9ec97c66a405d69",
-        "type": "function",
-        "z": "b9f522d81099a9f6",
-        "name": "lee",
-        "func": "msg.topic=\"select timestamp as fecha , humedad as valor from registro_humedad where timestamp > '2024-01-01'\";\nreturn msg;",
-        "outputs": 1,
-        "timeout": "",
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 270,
-        "y": 860,
-        "wires": [
-            [
-                "cb6fe4a1ee4f0d57",
-                "e30d5af8aa10950a"
-            ]
-        ]
-    },
-    {
-        "id": "e30d5af8aa10950a",
-        "type": "mysql",
-        "z": "b9f522d81099a9f6",
-        "mydb": "9db82ae2.8d0038",
-        "name": "",
-        "x": 410,
-        "y": 860,
-        "wires": [
-            [
-                "cb6fe4a1ee4f0d57",
-                "27e8095f63510968"
-            ]
-        ]
-    },
-    {
-        "id": "27e8095f63510968",
-        "type": "change",
-        "z": "b9f522d81099a9f6",
-        "name": "",
-        "rules": [
-            {
-                "t": "set",
-                "p": "payload",
-                "pt": "msg",
-                "to": "[{\t    \"series\": [\"valor\"],\t    \"labels\": [\"timestamp\"],\t    \"data\": [[payload.{\t        \"x\": fecha,\t        \"y\": $.\"valor\"\t    }]]\t}]",
-                "tot": "jsonata"
-            }
-        ],
-        "action": "",
-        "property": "",
-        "from": "",
-        "to": "",
-        "reg": false,
-        "x": 610,
-        "y": 860,
-        "wires": [
-            [
-                "0dcfb9fd4272b5d3"
-            ]
-        ]
-    },
-    {
-        "id": "0dcfb9fd4272b5d3",
-        "type": "ui_chart",
-        "z": "b9f522d81099a9f6",
-        "name": "humedad_chart",
-        "group": "1d2e28fe.c70157",
-        "order": 19,
-        "width": 12,
-        "height": 6,
-        "label": "Humedad",
-        "chartType": "line",
-        "legend": "false",
-        "xformat": "auto",
-        "interpolate": "linear",
-        "nodata": "",
-        "dot": false,
-        "ymin": "0",
-        "ymax": "100",
-        "removeOlder": "0",
-        "removeOlderPoints": "10",
-        "removeOlderUnit": "3600",
-        "cutout": 0,
-        "useOneColor": false,
-        "useUTC": false,
-        "colors": [
-            "#1f77b4",
-            "#aec7e8",
-            "#ff7f0e",
-            "#2ca02c",
-            "#98df8a",
-            "#d62728",
-            "#ff9896",
-            "#9467bd",
-            "#c5b0d5"
-        ],
-        "outputs": 1,
-        "useDifferentColor": false,
-        "className": "",
-        "x": 830,
-        "y": 860,
-        "wires": [
-            []
-        ]
-    },
-    {
-        "id": "cb6fe4a1ee4f0d57",
-        "type": "debug",
-        "z": "b9f522d81099a9f6",
-        "name": "",
-        "active": false,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "false",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 600,
-        "y": 920,
-        "wires": []
-    },
-    {
-        "id": "7faad5b501046ac4",
-        "type": "ui_gauge",
-        "z": "b9f522d81099a9f6",
-        "name": "humedad_indicator",
-        "group": "1d2e28fe.c70157",
-        "order": 10,
-        "width": 3,
-        "height": 3,
-        "gtype": "gage",
-        "title": "Humedad",
-        "label": "%",
-        "format": "{{value}}",
-        "min": 0,
-        "max": "100",
-        "colors": [
-            "#00b500",
-            "#e6e600",
-            "#ca3838"
-        ],
-        "seg1": "",
-        "seg2": "",
-        "diff": false,
-        "className": "",
-        "x": 370,
-        "y": 700,
-        "wires": []
-    },
-    {
-        "id": "9ffad8b60b69bd46",
-        "type": "debug",
-        "z": "b9f522d81099a9f6",
-        "name": "debug 1",
-        "active": false,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "payload",
-        "targetType": "msg",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 340,
-        "y": 780,
-        "wires": []
-    },
-    {
-        "id": "75ad939fdd95af98",
-        "type": "mqtt in",
-        "z": "b9f522d81099a9f6",
-        "name": "",
-        "topic": "grupo2/rpi/temperatura",
-        "qos": "0",
-        "datatype": "auto-detect",
-        "broker": "30ec7003649288df",
-        "nl": false,
-        "rap": true,
-        "rh": 0,
-        "inputs": 0,
-        "x": 120,
-        "y": 600,
-        "wires": [
-            [
-                "66b3ecaf81e62345",
-                "30b45f94f806bc25"
-            ]
-        ]
-    },
-    {
-        "id": "d7f84b487b3dbcbd",
-        "type": "function",
-        "z": "b9f522d81099a9f6",
-        "name": "inserta",
-        "func": "msg.topic=\"insert into registro_temperatura (timestamp,temperatura) values ('\"+Date.now()+ \"','\" +msg.payload+ \"')\" ;\nreturn msg;",
-        "outputs": 1,
-        "timeout": "",
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 330,
-        "y": 600,
-        "wires": [
-            [
-                "3f16e5f6158c9d8e"
-            ]
-        ]
-    },
-    {
-        "id": "3f16e5f6158c9d8e",
-        "type": "mysql",
-        "z": "b9f522d81099a9f6",
-        "mydb": "9db82ae2.8d0038",
-        "name": "",
-        "x": 470,
-        "y": 600,
-        "wires": [
-            []
-        ]
-    },
-    {
-        "id": "66b3ecaf81e62345",
-        "type": "ui_gauge",
-        "z": "b9f522d81099a9f6",
-        "name": "",
-        "group": "841367fba213482c",
-        "order": 11,
-        "width": 3,
-        "height": 3,
-        "gtype": "gage",
-        "title": "Temperatura",
-        "label": "°C",
-        "format": "{{value}}",
-        "min": 0,
-        "max": "100",
-        "colors": [
-            "#00b500",
-            "#e6e600",
-            "#ca3838"
-        ],
-        "seg1": "",
-        "seg2": "",
-        "diff": false,
-        "className": "",
-        "x": 350,
-        "y": 560,
-        "wires": []
-    },
-    {
-        "id": "30b45f94f806bc25",
-        "type": "debug",
-        "z": "b9f522d81099a9f6",
-        "name": "debug 2",
-        "active": false,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "payload",
-        "targetType": "msg",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 340,
-        "y": 640,
-        "wires": []
-    },
-    {
-        "id": "09389954e452859b",
-        "type": "mqtt in",
-        "z": "b9f522d81099a9f6",
-        "g": "684c6eb8d1a2bdca",
-        "name": "",
-        "topic": "grupo2/KL43/accelZ",
-        "qos": "0",
-        "datatype": "auto-detect",
-        "broker": "30ec7003649288df",
-        "nl": false,
-        "rap": true,
-        "rh": 0,
-        "inputs": 0,
-        "x": 130,
-        "y": 380,
-        "wires": [
-            [
-                "2ff8b26e17f874d6",
-                "d5e8108357f0d2f1",
-                "b8f4daca0fe34f09"
-            ]
-        ]
-    },
-    {
-        "id": "b8f4daca0fe34f09",
-        "type": "function",
-        "z": "b9f522d81099a9f6",
-        "g": "684c6eb8d1a2bdca",
-        "name": "inserta",
-        "func": "msg.topic=\"insert into registro_aceleracion (timestamp,aceleracion,eje) values ('\"+Date.now()+ \"','\" +msg.payload+ \"','z')\" ;\nreturn msg;",
-        "outputs": 1,
-        "timeout": "",
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 350,
-        "y": 380,
-        "wires": [
-            [
-                "683a7f129f7b86be"
-            ]
-        ]
-    },
-    {
-        "id": "683a7f129f7b86be",
-        "type": "mysql",
-        "z": "b9f522d81099a9f6",
-        "g": "684c6eb8d1a2bdca",
-        "mydb": "9db82ae2.8d0038",
-        "name": "",
-        "x": 490,
-        "y": 380,
-        "wires": [
-            []
-        ]
-    },
-    {
-        "id": "2ff8b26e17f874d6",
-        "type": "ui_gauge",
-        "z": "b9f522d81099a9f6",
-        "g": "684c6eb8d1a2bdca",
-        "name": "",
-        "group": "841367fba213482c",
-        "order": 3,
-        "width": 3,
-        "height": 3,
-        "gtype": "gage",
-        "title": "Aceleracion Z",
-        "label": "G",
-        "format": "{{value}}",
-        "min": "-1",
-        "max": "1",
-        "colors": [
-            "#00b500",
-            "#e6e600",
-            "#ca3838"
-        ],
-        "seg1": "",
-        "seg2": "",
-        "diff": false,
-        "className": "",
-        "x": 380,
-        "y": 340,
-        "wires": []
-    },
-    {
-        "id": "d5e8108357f0d2f1",
-        "type": "debug",
-        "z": "b9f522d81099a9f6",
-        "g": "684c6eb8d1a2bdca",
-        "name": "debug 3",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "payload",
-        "targetType": "msg",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 360,
-        "y": 420,
-        "wires": []
-    },
-    {
-        "id": "d8b314bbb15a201b",
-        "type": "mqtt in",
-        "z": "b9f522d81099a9f6",
-        "g": "684c6eb8d1a2bdca",
-        "name": "",
-        "topic": "grupo2/KL43/accelY",
-        "qos": "0",
-        "datatype": "auto-detect",
-        "broker": "30ec7003649288df",
-        "nl": false,
-        "rap": true,
-        "rh": 0,
-        "inputs": 0,
-        "x": 130,
-        "y": 240,
-        "wires": [
-            [
-                "99dd4be7a7ab5745",
-                "4bb29916ba0d135e",
-                "198e134888707c07"
-            ]
-        ]
-    },
-    {
-        "id": "198e134888707c07",
-        "type": "function",
-        "z": "b9f522d81099a9f6",
-        "g": "684c6eb8d1a2bdca",
-        "name": "inserta",
-        "func": "msg.topic=\"insert into registro_aceleracion (timestamp,aceleracion,eje) values ('\"+Date.now()+ \"','\" +msg.payload+ \"','y')\" ;\nreturn msg;",
-        "outputs": 1,
-        "timeout": "",
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 350,
-        "y": 240,
-        "wires": [
-            [
-                "97c2f3b00ecfac0b"
-            ]
-        ]
-    },
-    {
-        "id": "97c2f3b00ecfac0b",
-        "type": "mysql",
-        "z": "b9f522d81099a9f6",
-        "g": "684c6eb8d1a2bdca",
-        "mydb": "9db82ae2.8d0038",
-        "name": "",
-        "x": 490,
-        "y": 240,
-        "wires": [
-            []
-        ]
-    },
-    {
-        "id": "99dd4be7a7ab5745",
-        "type": "ui_gauge",
-        "z": "b9f522d81099a9f6",
-        "g": "684c6eb8d1a2bdca",
-        "name": "",
-        "group": "841367fba213482c",
-        "order": 2,
-        "width": 3,
-        "height": 3,
-        "gtype": "gage",
-        "title": "Aceleracion Y",
-        "label": "G",
-        "format": "{{value}}",
-        "min": "-1",
-        "max": "1",
-        "colors": [
-            "#00b500",
-            "#e6e600",
-            "#ca3838"
-        ],
-        "seg1": "",
-        "seg2": "",
-        "diff": false,
-        "className": "",
-        "x": 380,
-        "y": 200,
-        "wires": []
-    },
-    {
-        "id": "4bb29916ba0d135e",
-        "type": "debug",
-        "z": "b9f522d81099a9f6",
-        "g": "684c6eb8d1a2bdca",
-        "name": "debug 4",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "payload",
-        "targetType": "msg",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 360,
-        "y": 280,
-        "wires": []
-    },
-    {
-        "id": "7c2df2c680c047a8",
-        "type": "mqtt in",
-        "z": "b9f522d81099a9f6",
-        "g": "684c6eb8d1a2bdca",
-        "name": "",
-        "topic": "grupo2/KL43/accelX",
-        "qos": "0",
-        "datatype": "auto-detect",
-        "broker": "30ec7003649288df",
-        "nl": false,
-        "rap": true,
-        "rh": 0,
-        "inputs": 0,
-        "x": 130,
-        "y": 100,
-        "wires": [
-            [
-                "fce463b99161e693",
-                "64d53c806ed4d4b3",
-                "2045d8efaa8b490a"
-            ]
-        ]
-    },
-    {
-        "id": "2045d8efaa8b490a",
-        "type": "function",
-        "z": "b9f522d81099a9f6",
-        "g": "684c6eb8d1a2bdca",
-        "name": "inserta",
-        "func": "msg.topic=\"insert into registro_aceleracion (timestamp,aceleracion,eje) values ('\"+Date.now()+ \"','\" +msg.payload+ \"','x')\" ;\nreturn msg;",
-        "outputs": 1,
-        "timeout": "",
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 350,
-        "y": 100,
-        "wires": [
-            [
-                "ee07669c5b7378de"
-            ]
-        ]
-    },
-    {
-        "id": "ee07669c5b7378de",
-        "type": "mysql",
-        "z": "b9f522d81099a9f6",
-        "g": "684c6eb8d1a2bdca",
-        "mydb": "9db82ae2.8d0038",
-        "name": "",
-        "x": 490,
-        "y": 100,
-        "wires": [
-            []
-        ]
-    },
-    {
-        "id": "fce463b99161e693",
-        "type": "ui_gauge",
-        "z": "b9f522d81099a9f6",
-        "g": "684c6eb8d1a2bdca",
-        "name": "",
-        "group": "841367fba213482c",
-        "order": 1,
-        "width": 3,
-        "height": 3,
-        "gtype": "gage",
-        "title": "Aceleracion X",
-        "label": "G",
-        "format": "{{value}}",
-        "min": "-1",
-        "max": "1",
-        "colors": [
-            "#00b500",
-            "#e6e600",
-            "#ca3838"
-        ],
-        "seg1": "",
-        "seg2": "",
-        "diff": false,
-        "className": "",
-        "x": 380,
-        "y": 60,
-        "wires": []
-    },
-    {
-        "id": "64d53c806ed4d4b3",
-        "type": "debug",
-        "z": "b9f522d81099a9f6",
-        "g": "684c6eb8d1a2bdca",
-        "name": "debug 5",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "payload",
-        "targetType": "msg",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 360,
-        "y": 140,
-        "wires": []
+        "h": 262
     },
     {
         "id": "8a3eb40024e57c96",
         "type": "mqtt in",
-        "z": "b9f522d81099a9f6",
+        "z": "a71001d0309543c3",
         "g": "1f62df5a32ae8a29",
         "name": "",
-        "topic": "grupo2/KL43/sw1",
+        "topic": "grupo2/KL43/sw/sw1",
         "qos": "0",
         "datatype": "auto-detect",
         "broker": "30ec7003649288df",
@@ -819,53 +34,19 @@
         "rap": true,
         "rh": 0,
         "inputs": 0,
-        "x": 680,
-        "y": 100,
+        "x": 950,
+        "y": 1000,
         "wires": [
             [
                 "6ea8814eac3c6c1f",
-                "5bd67452d291266e"
+                "cd255ba37b76c0ab"
             ]
-        ]
-    },
-    {
-        "id": "2886f7d5a6025b35",
-        "type": "function",
-        "z": "b9f522d81099a9f6",
-        "g": "1f62df5a32ae8a29",
-        "name": "inserta",
-        "func": "msg.topic=\"insert into registro_temperatura (timestamp,temperatura) values ('\"+Date.now()+ \"','\" +msg.payload+ \"')\" ;\nreturn msg;",
-        "outputs": 1,
-        "timeout": "",
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 910,
-        "y": 100,
-        "wires": [
-            [
-                "a30a1b0e423d47cf"
-            ]
-        ]
-    },
-    {
-        "id": "a30a1b0e423d47cf",
-        "type": "mysql",
-        "z": "b9f522d81099a9f6",
-        "g": "1f62df5a32ae8a29",
-        "mydb": "9db82ae2.8d0038",
-        "name": "",
-        "x": 1050,
-        "y": 100,
-        "wires": [
-            []
         ]
     },
     {
         "id": "6ea8814eac3c6c1f",
         "type": "debug",
-        "z": "b9f522d81099a9f6",
+        "z": "a71001d0309543c3",
         "g": "1f62df5a32ae8a29",
         "name": "debug 6",
         "active": false,
@@ -876,116 +57,17 @@
         "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 920,
-        "y": 140,
-        "wires": []
-    },
-    {
-        "id": "a6d3a0e818b0ec67",
-        "type": "mqtt in",
-        "z": "b9f522d81099a9f6",
-        "name": "",
-        "topic": "grupo2/KL43/light",
-        "qos": "0",
-        "datatype": "auto-detect",
-        "broker": "30ec7003649288df",
-        "nl": false,
-        "rap": true,
-        "rh": 0,
-        "inputs": 0,
-        "x": 680,
-        "y": 400,
-        "wires": [
-            [
-                "766212f628181ca1",
-                "64cb53316306c5dc"
-            ]
-        ]
-    },
-    {
-        "id": "c65311d5708052fd",
-        "type": "function",
-        "z": "b9f522d81099a9f6",
-        "name": "inserta",
-        "func": "msg.topic=\"insert into registro_temperatura (timestamp,temperatura) values ('\"+Date.now()+ \"','\" +msg.payload+ \"')\" ;\nreturn msg;",
-        "outputs": 1,
-        "timeout": "",
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 910,
-        "y": 400,
-        "wires": [
-            [
-                "4b625ed4127d171a"
-            ]
-        ]
-    },
-    {
-        "id": "4b625ed4127d171a",
-        "type": "mysql",
-        "z": "b9f522d81099a9f6",
-        "mydb": "9db82ae2.8d0038",
-        "name": "",
-        "x": 1050,
-        "y": 400,
-        "wires": [
-            []
-        ]
-    },
-    {
-        "id": "766212f628181ca1",
-        "type": "ui_gauge",
-        "z": "b9f522d81099a9f6",
-        "name": "",
-        "group": "841367fba213482c",
-        "order": 9,
-        "width": 3,
-        "height": 3,
-        "gtype": "gage",
-        "title": "Luz",
-        "label": "%",
-        "format": "{{value}}",
-        "min": "0",
-        "max": "100",
-        "colors": [
-            "#00b500",
-            "#e6e600",
-            "#ca3838"
-        ],
-        "seg1": "",
-        "seg2": "",
-        "diff": false,
-        "className": "",
-        "x": 910,
-        "y": 360,
-        "wires": []
-    },
-    {
-        "id": "64cb53316306c5dc",
-        "type": "debug",
-        "z": "b9f522d81099a9f6",
-        "name": "debug 8",
-        "active": false,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "payload",
-        "targetType": "msg",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 920,
-        "y": 440,
+        "x": 1180,
+        "y": 1040,
         "wires": []
     },
     {
         "id": "3f91cbcbe6e08d5f",
         "type": "mqtt in",
-        "z": "b9f522d81099a9f6",
+        "z": "a71001d0309543c3",
         "g": "1f62df5a32ae8a29",
         "name": "",
-        "topic": "grupo2/KL43/sw3",
+        "topic": "grupo2/KL43/sw/sw3",
         "qos": "0",
         "datatype": "auto-detect",
         "broker": "30ec7003649288df",
@@ -993,53 +75,19 @@
         "rap": true,
         "rh": 0,
         "inputs": 0,
-        "x": 680,
-        "y": 240,
+        "x": 950,
+        "y": 1140,
         "wires": [
             [
                 "769adb57cecfa7dd",
-                "85df10c4aff746a6"
+                "8c62c7e408cd3b6b"
             ]
-        ]
-    },
-    {
-        "id": "5c645562ac2f5a0d",
-        "type": "function",
-        "z": "b9f522d81099a9f6",
-        "g": "1f62df5a32ae8a29",
-        "name": "inserta",
-        "func": "msg.topic=\"insert into registro_temperatura (timestamp,temperatura) values ('\"+Date.now()+ \"','\" +msg.payload+ \"')\" ;\nreturn msg;",
-        "outputs": 1,
-        "timeout": "",
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 910,
-        "y": 240,
-        "wires": [
-            [
-                "f8ae541f4a67efa7"
-            ]
-        ]
-    },
-    {
-        "id": "f8ae541f4a67efa7",
-        "type": "mysql",
-        "z": "b9f522d81099a9f6",
-        "g": "1f62df5a32ae8a29",
-        "mydb": "9db82ae2.8d0038",
-        "name": "",
-        "x": 1050,
-        "y": 240,
-        "wires": [
-            []
         ]
     },
     {
         "id": "769adb57cecfa7dd",
         "type": "debug",
-        "z": "b9f522d81099a9f6",
+        "z": "a71001d0309543c3",
         "g": "1f62df5a32ae8a29",
         "name": "debug 9",
         "active": false,
@@ -1050,242 +98,73 @@
         "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 920,
-        "y": 280,
+        "x": 1180,
+        "y": 1180,
         "wires": []
     },
     {
-        "id": "fdf711e259ed2d53",
-        "type": "mqtt out",
-        "z": "b9f522d81099a9f6",
-        "g": "a9a9e84ed3ce3fa5",
-        "name": "",
-        "topic": "grupo2/KL43/redLED",
-        "qos": "",
-        "retain": "",
-        "respTopic": "",
-        "contentType": "text/plain",
-        "userProps": "",
-        "correl": "",
-        "expiry": "",
-        "broker": "30ec7003649288df",
-        "x": 1460,
-        "y": 60,
-        "wires": []
-    },
-    {
-        "id": "70fa4bb3d85210ce",
-        "type": "mqtt out",
-        "z": "b9f522d81099a9f6",
-        "g": "a9a9e84ed3ce3fa5",
-        "name": "",
-        "topic": "grupo2/KL43/greenLED",
-        "qos": "",
-        "retain": "",
-        "respTopic": "",
-        "contentType": "",
-        "userProps": "",
-        "correl": "",
-        "expiry": "",
-        "broker": "30ec7003649288df",
-        "x": 1470,
-        "y": 120,
-        "wires": []
-    },
-    {
-        "id": "5bd67452d291266e",
-        "type": "ui_text",
-        "z": "b9f522d81099a9f6",
+        "id": "8c62c7e408cd3b6b",
+        "type": "ui_led",
+        "z": "a71001d0309543c3",
         "g": "1f62df5a32ae8a29",
-        "group": "841367fba213482c",
-        "order": 17,
-        "width": 0,
-        "height": 0,
-        "name": "",
-        "label": "SW1",
-        "format": "{{msg.payload}}",
-        "layout": "row-spread",
-        "className": "",
-        "style": false,
-        "font": "",
-        "fontSize": 16,
-        "color": "#000000",
-        "x": 910,
-        "y": 60,
-        "wires": []
-    },
-    {
-        "id": "85df10c4aff746a6",
-        "type": "ui_text",
-        "z": "b9f522d81099a9f6",
-        "g": "1f62df5a32ae8a29",
-        "group": "841367fba213482c",
-        "order": 18,
-        "width": 0,
-        "height": 0,
-        "name": "",
-        "label": "SW3",
-        "format": "{{msg.payload}}",
-        "layout": "row-spread",
-        "className": "",
-        "style": false,
-        "font": "",
-        "fontSize": 16,
-        "color": "#000000",
-        "x": 910,
-        "y": 200,
-        "wires": []
-    },
-    {
-        "id": "36b79724e18ba6a5",
-        "type": "ui_spacer",
-        "z": "b9f522d81099a9f6",
-        "name": "spacer",
-        "group": "841367fba213482c",
-        "order": 4,
-        "width": 8,
-        "height": 1
-    },
-    {
-        "id": "d40b81a4cc86c401",
-        "type": "ui_spacer",
-        "z": "b9f522d81099a9f6",
-        "name": "spacer",
-        "group": "841367fba213482c",
-        "order": 5,
-        "width": 1,
-        "height": 1
-    },
-    {
-        "id": "a548104e4111aef3",
-        "type": "ui_spacer",
-        "z": "b9f522d81099a9f6",
-        "name": "spacer",
-        "group": "841367fba213482c",
-        "order": 7,
-        "width": 4,
-        "height": 1
-    },
-    {
-        "id": "b0b9d286c83c7f9e",
-        "type": "ui_spacer",
-        "z": "b9f522d81099a9f6",
-        "name": "spacer",
-        "group": "841367fba213482c",
-        "order": 8,
-        "width": 8,
-        "height": 1
-    },
-    {
-        "id": "458bd762699947ff",
-        "type": "ui_spacer",
-        "z": "b9f522d81099a9f6",
-        "name": "spacer",
-        "group": "841367fba213482c",
-        "order": 12,
-        "width": 1,
-        "height": 1
-    },
-    {
-        "id": "91cac346811c9a7d",
-        "type": "ui_spacer",
-        "z": "b9f522d81099a9f6",
-        "name": "spacer",
-        "group": "841367fba213482c",
-        "order": 14,
-        "width": 4,
-        "height": 1
-    },
-    {
-        "id": "5c7edaab33e0b129",
-        "type": "ui_spacer",
-        "z": "b9f522d81099a9f6",
-        "name": "spacer",
-        "group": "841367fba213482c",
-        "order": 15,
-        "width": 8,
-        "height": 1
-    },
-    {
-        "id": "9258e86cfecd217e",
-        "type": "ui_spacer",
-        "z": "b9f522d81099a9f6",
-        "name": "spacer",
-        "group": "841367fba213482c",
-        "order": 16,
-        "width": 8,
-        "height": 1
-    },
-    {
-        "id": "d2dd399927794faf",
-        "type": "ui_spacer",
-        "z": "b9f522d81099a9f6",
-        "name": "spacer",
-        "group": "841367fba213482c",
-        "order": 20,
-        "width": 5,
-        "height": 1
-    },
-    {
-        "id": "39e6d0e5275a733d",
-        "type": "ui_spacer",
-        "z": "b9f522d81099a9f6",
-        "name": "spacer",
-        "group": "841367fba213482c",
-        "order": 21,
-        "width": 5,
-        "height": 1
-    },
-    {
-        "id": "7955e9b78a187bd0",
-        "type": "ui_spacer",
-        "z": "b9f522d81099a9f6",
-        "name": "spacer",
-        "group": "841367fba213482c",
-        "order": 22,
-        "width": 5,
-        "height": 1
-    },
-    {
-        "id": "1c891e93f9ae4787",
-        "type": "ui_spacer",
-        "z": "b9f522d81099a9f6",
-        "name": "spacer",
-        "group": "841367fba213482c",
-        "order": 23,
-        "width": 5,
-        "height": 1
-    },
-    {
-        "id": "08955922c1843652",
-        "type": "ui_spacer",
-        "z": "b9f522d81099a9f6",
-        "name": "spacer",
-        "group": "841367fba213482c",
         "order": 24,
-        "width": 5,
-        "height": 1
-    },
-    {
-        "id": "df7d6d6504114a57",
-        "type": "ui_spacer",
-        "z": "b9f522d81099a9f6",
-        "name": "spacer",
         "group": "841367fba213482c",
-        "order": 25,
-        "width": 5,
-        "height": 1
+        "width": 3,
+        "height": 1,
+        "label": "Switch 3",
+        "labelPlacement": "left",
+        "labelAlignment": "left",
+        "colorForValue": [
+            {
+                "color": "#18685f",
+                "value": "0",
+                "valueType": "num"
+            },
+            {
+                "color": "#5cffec",
+                "value": "1",
+                "valueType": "num"
+            }
+        ],
+        "allowColorForValueInMessage": false,
+        "shape": "circle",
+        "showGlow": false,
+        "name": "switch_3",
+        "x": 1180,
+        "y": 1140,
+        "wires": []
     },
     {
-        "id": "841367fba213482c",
-        "type": "ui_group",
-        "name": "Group 1",
-        "tab": "289cc5e02c457bcf",
-        "order": 1,
-        "disp": false,
-        "width": "17",
-        "collapse": false,
-        "className": ""
+        "id": "cd255ba37b76c0ab",
+        "type": "ui_led",
+        "z": "a71001d0309543c3",
+        "g": "1f62df5a32ae8a29",
+        "order": 18,
+        "group": "841367fba213482c",
+        "width": 3,
+        "height": 1,
+        "label": "Switch 1",
+        "labelPlacement": "left",
+        "labelAlignment": "left",
+        "colorForValue": [
+            {
+                "color": "#18685f",
+                "value": "0",
+                "valueType": "num"
+            },
+            {
+                "color": "#5cffec",
+                "value": "1",
+                "valueType": "num"
+            }
+        ],
+        "allowColorForValueInMessage": false,
+        "shape": "circle",
+        "showGlow": false,
+        "name": "switch_1",
+        "x": 1180,
+        "y": 1000,
+        "wires": []
     },
     {
         "id": "30ec7003649288df",
@@ -1319,40 +198,22 @@
         "sessionExpiry": ""
     },
     {
-        "id": "9db82ae2.8d0038",
-        "type": "MySQLdatabase",
-        "name": "local",
-        "host": "127.0.0.1",
-        "port": "3306",
-        "db": "tp2_sea_nodemcu",
-        "tz": "",
-        "charset": ""
-    },
-    {
-        "id": "1d2e28fe.c70157",
+        "id": "841367fba213482c",
         "type": "ui_group",
-        "name": "Sensador de Humedad (NodeMCU)",
-        "tab": "9444ed30.10f4",
-        "order": 2,
-        "disp": true,
-        "width": "29",
+        "name": "Group 1",
+        "tab": "289cc5e02c457bcf",
+        "order": 1,
+        "disp": false,
+        "width": "25",
         "collapse": false,
         "className": ""
     },
     {
         "id": "289cc5e02c457bcf",
         "type": "ui_tab",
-        "name": "Tablero",
-        "icon": "dashboard",
+        "name": "KL43Z",
+        "icon": "fa-arrows",
         "order": 1,
-        "disabled": false,
-        "hidden": false
-    },
-    {
-        "id": "9444ed30.10f4",
-        "type": "ui_tab",
-        "name": "SEA",
-        "icon": "dashboard",
         "disabled": false,
         "hidden": false
     }

@@ -1,24 +1,20 @@
-package com.grupo2.tp2_sea.ui.node_subcreen
+package com.grupo2.tp2_sea.ui.node_subscreen
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.requiredHeight
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -37,11 +33,13 @@ fun ColumnScope.Kl43(
     light: String,
     sw1: String,
     sw3: String,
-    onClickToggleRedLed: () -> Unit,
-    onClickToggleGreenLed: () -> Unit,
+    redLed: String,
+    greenLed: String,
+    toggleRedLed: () -> Unit,
+    toggleGreenLed: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Text(text = "Dashboard TP2", style = MaterialTheme.typography.displayMedium)
+    Text(text = "Dashboard", style = MaterialTheme.typography.displayMedium)
     Spacer(modifier = Modifier.height(32.dp))
     Text(
         text = "KL43Z",
@@ -91,25 +89,41 @@ fun ColumnScope.Kl43(
                 displayValue = light,
                 min = 0f,
                 max = 100f,
-                modifier = Modifier.size(100.dp)
+                modifier = Modifier.size(130.dp)
             )
-            Spacer(modifier = Modifier.height(16.dp))
-            Row(Modifier.height(IntrinsicSize.Min)) {
-                Text(text = "SW1")
-                Spacer(modifier = Modifier.width(16.dp))
-                Indicator(on = sw1 == "1")
-            }
-            Spacer(modifier = Modifier.height(16.dp))
-            Row(Modifier.height(IntrinsicSize.Min)) {
-                Text(text = "SW3")
-                Spacer(modifier = Modifier.width(16.dp))
-                Indicator(on = sw3 == "1")
-            }
         }
     }
-    Spacer(modifier = Modifier.height(16.dp))
+    Spacer(modifier = Modifier.height(24.dp))
 
-    Row(Modifier.fillMaxWidth()) {
+    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.height(IntrinsicSize.Min)) {
+        Text(text = "Led Rojo", Modifier.width(100.dp))
+        Spacer(modifier = Modifier.width(16.dp))
+        Switch(
+            checked = (redLed.toIntOrNull() ?: 0) == 1,
+            onCheckedChange = { toggleRedLed() }
+        )
+
+        Spacer(modifier = Modifier.weight(1f))
+
+        Text(text = "Switch 1")
+        Spacer(modifier = Modifier.width(16.dp))
+        Indicator(on = sw1 == "1")
+    }
+    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.height(IntrinsicSize.Min)) {
+        Text(text = "Led Verde", Modifier.width(100.dp))
+        Spacer(modifier = Modifier.width(16.dp))
+        Switch(
+            checked = (greenLed.toIntOrNull() ?: 0) == 1,
+            onCheckedChange = { toggleGreenLed() }
+        )
+
+        Spacer(modifier = Modifier.weight(1f))
+
+        Text(text = "Switch 3")
+        Spacer(modifier = Modifier.width(16.dp))
+        Indicator(on = sw3 == "1")
+    }
+    /*Row(Modifier.fillMaxWidth()) {
         Button(onClick = onClickToggleRedLed, modifier = Modifier.weight(1f)) {
             Text(text = "Toggle LED Rojo")
         }
@@ -117,7 +131,7 @@ fun ColumnScope.Kl43(
         Button(onClick = onClickToggleGreenLed, modifier = Modifier.weight(1f)) {
             Text(text = "Toggle LED Verde")
         }
-    }
+    }*/
 }
 
 @Composable
@@ -126,5 +140,6 @@ fun Indicator(on: Boolean) {
     Spacer(modifier = Modifier
         .fillMaxHeight(1f)
         .aspectRatio(1f)
+        .padding(12.dp)
         .drawBehind { drawRoundRect(color, cornerRadius = CornerRadius(size.maxDimension * .25f)) })
 }

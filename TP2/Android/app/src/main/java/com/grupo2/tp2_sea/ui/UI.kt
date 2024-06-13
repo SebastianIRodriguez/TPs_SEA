@@ -23,9 +23,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.LiveData
 import com.grupo2.tp2_sea.MainActivity
-import com.grupo2.tp2_sea.ui.node_subcreen.Kl43
-import com.grupo2.tp2_sea.ui.node_subcreen.NodeMCU
-import com.grupo2.tp2_sea.ui.node_subcreen.RaspberryPi
+import com.grupo2.tp2_sea.ui.node_subscreen.Kl43
+import com.grupo2.tp2_sea.ui.node_subscreen.NodeMCU
+import com.grupo2.tp2_sea.ui.node_subscreen.RaspberryPi
 
 fun MainActivity.renderUI(
     humidityState: LiveData<String>,
@@ -36,6 +36,8 @@ fun MainActivity.renderUI(
     lightState: LiveData<String>,
     sw1State: LiveData<String>,
     sw3State: LiveData<String>,
+    redLedState: LiveData<String>,
+    greenLedState: LiveData<String>,
     onClickToggleRedLed: () -> Unit,
     onClickToggleGreenLed: () -> Unit
 ) {
@@ -49,9 +51,11 @@ fun MainActivity.renderUI(
         val light by lightState.observeAsState("")
         val sw1 by sw1State.observeAsState("")
         val sw3 by sw3State.observeAsState("")
-        val state by remember(humidity, temperature, accelX, accelY, accelZ, light, sw1, sw3) {
+        val redLed by redLedState.observeAsState("")
+        val greenLed by greenLedState.observeAsState("")
+        val state by remember(humidity, temperature, accelX, accelY, accelZ, light, sw1, sw3, redLed, greenLed) {
             derivedStateOf {
-                UiState(humidity, temperature, accelX, accelY, accelZ, light, sw1, sw3)
+                UiState(humidity, temperature, accelX, accelY, accelZ, light, sw1, sw3, redLed, greenLed)
             }
         }
         SeaTheme {
@@ -85,10 +89,12 @@ fun MainUI(
             state.light,
             state.sw1,
             state.sw3,
+            state.redLed,
+            state.greenLed,
             onClickToggleRedLed,
             onClickToggleGreenLed
         )
-        Spacer(modifier = Modifier.height(48.dp))
+        Spacer(modifier = Modifier.height(72.dp))
         Row(Modifier.fillMaxWidth()) {
             RaspberryPi(state.temperature, modifier = Modifier.weight(1f))
             NodeMCU(state.humidity, modifier = Modifier.weight(1f))
@@ -112,7 +118,9 @@ private fun Preview() {
         accelZ = "-0.75",
         light = "75",
         sw1 = "1",
-        sw3 = "0"
+        sw3 = "0",
+        redLed = "1",
+        greenLed = "0"
     )
     SeaTheme(darkTheme = true) {
         Surface(Modifier.fillMaxSize()) {

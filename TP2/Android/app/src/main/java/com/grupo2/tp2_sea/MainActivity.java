@@ -16,16 +16,17 @@ public class MainActivity extends AppCompatActivity {
     private static final String CLIENT_ID = "Android_user";
     private static final String TOPIC_HUMIDITY = "grupo2/nodemcu/humedad";
     private static final String TOPIC_TEMPERATURE = "grupo2/rpi/temperatura";
-    private static final String TOPIC_ACCELX = "grupo2/KL43/accelX";
-    private static final String TOPIC_ACCELY = "grupo2/KL43/accelY";
-    private static final String TOPIC_ACCELZ = "grupo2/KL43/accelZ";
+    private static final String TOPIC_ACCELX = "grupo2/KL43/accel/X";
+    private static final String TOPIC_ACCELY = "grupo2/KL43/accel/Y";
+    private static final String TOPIC_ACCELZ = "grupo2/KL43/accel/Z";
     private static final String TOPIC_LIGHT = "grupo2/KL43/light";
-    private static final String TOPIC_SW1 = "grupo2/KL43/sw1";
-    private static final String TOPIC_SW3 = "grupo2/KL43/sw3";
-    private static final String TOPIC_RED_LED = "grupo2/KL43/redLED";
-    private static final String TOPIC_GREEN_LED = "grupo2/KL43/greenLED";
+    private static final String TOPIC_SW1 = "grupo2/KL43/sw/sw1";
+    private static final String TOPIC_SW3 = "grupo2/KL43/sw/sw3";
+    private static final String TOPIC_RED_LED_COMMAND = "grupo2/KL43/LEDcommand/red";
+    private static final String TOPIC_RED_LED_STATE = "grupo2/KL43/LEDstate/red";
+    private static final String TOPIC_GREEN_LED_COMMAND = "grupo2/KL43/LEDcommand/green";
+    private static final String TOPIC_GREEN_LED_STATE = "grupo2/KL43/LEDstate/green";
     private MqttHandler mqttHandler;
-    private TextView humidityTextView;
 
     private final MutableLiveData<String> humidity = new MutableLiveData<String>();
     private final MutableLiveData<String> temperature = new MutableLiveData<String>();
@@ -35,6 +36,8 @@ public class MainActivity extends AppCompatActivity {
     private final MutableLiveData<String> light = new MutableLiveData<String>();
     private final MutableLiveData<String> sw1 = new MutableLiveData<String>();
     private final MutableLiveData<String> sw3 = new MutableLiveData<String>();
+    private final MutableLiveData<String> redLed = new MutableLiveData<String>();
+    private final MutableLiveData<String> greenLed = new MutableLiveData<String>();
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -50,6 +53,8 @@ public class MainActivity extends AppCompatActivity {
                 light,
                 sw1,
                 sw3,
+                redLed,
+                greenLed,
                 () -> {
                     onToggleRedLed();
                     return null;
@@ -70,6 +75,8 @@ public class MainActivity extends AppCompatActivity {
         mqttHandler.subscribe(TOPIC_LIGHT);
         mqttHandler.subscribe(TOPIC_SW1);
         mqttHandler.subscribe(TOPIC_SW3);
+        mqttHandler.subscribe(TOPIC_RED_LED_STATE);
+        mqttHandler.subscribe(TOPIC_GREEN_LED_STATE);
     }
 
     @Override
@@ -104,14 +111,20 @@ public class MainActivity extends AppCompatActivity {
             case TOPIC_SW3:
                 sw3.postValue(msg);
                 break;
+            case TOPIC_RED_LED_STATE:
+                redLed.postValue(msg);
+                break;
+            case TOPIC_GREEN_LED_STATE:
+                greenLed.postValue(msg);
+                break;
         }
     }
 
     void onToggleRedLed() {
-        mqttHandler.publish(TOPIC_RED_LED, "T");
+        mqttHandler.publish(TOPIC_RED_LED_COMMAND, "T");
     }
 
     void onToggleGreenLed() {
-        mqttHandler.publish(TOPIC_RED_LED, "T");
+        mqttHandler.publish(TOPIC_GREEN_LED_COMMAND, "T");
     }
 }

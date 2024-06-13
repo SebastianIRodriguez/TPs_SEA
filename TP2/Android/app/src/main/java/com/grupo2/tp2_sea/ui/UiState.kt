@@ -9,4 +9,6 @@ data class UiState(
     val light: String,
     val sw1: String,
     val sw3: String,
+    val redLed: String,
+    val greenLed: String,
 )

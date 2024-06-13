@@ -1,4 +1,4 @@
-package com.grupo2.tp2_sea.ui.node_subcreen
+package com.grupo2.tp2_sea.ui.node_subscreen
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -13,18 +13,21 @@ import androidx.compose.ui.unit.dp
 import com.grupo2.tp2_sea.ui.gauge.SimpleRadialGauge
 
 @Composable
-fun RaspberryPi(temperature: String, modifier: Modifier) {
+fun NodeMCU(
+    humidity: String,
+    modifier: Modifier
+) {
     Column(modifier, horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
-            text = "Raspberry Pi",
+            text = "NodeMCU",
             style = MaterialTheme.typography.titleLarge
         )
         Spacer(modifier = Modifier.height(16.dp))
         SimpleRadialGauge(
-            title = "Temperatura",
+            title = "Humedad",
             unit = "%",
-            value = temperature.toFloatOrNull() ?: 0f,
-            displayValue = temperature,
+            value = humidity.toFloatOrNull() ?: 0f,
+            displayValue = humidity,
             min = 0f,
             max = 100f,
             modifier = Modifier.size(140.dp)
